@@ -2,12 +2,19 @@ import type { Locale, LocalisedText } from "@/content/i18n";
 
 export type PhotoTone = "sea" | "harbour" | "sand" | "dusk" | "olive" | "stone";
 
+export type PhotoAsset = {
+  src: string;
+  alt: LocalisedText;
+  objectPosition?: string;
+};
+
 export type Captain = {
-  name: string;
-  location: LocalisedText;
-  languages: LocalisedText;
-  introduction: LocalisedText;
+  name: LocalisedText;
+  location?: LocalisedText;
+  languages?: LocalisedText;
+  introduction?: LocalisedText;
   imageLabel: LocalisedText;
+  image?: PhotoAsset;
   tone: PhotoTone;
 };
 
@@ -15,14 +22,17 @@ export type Story = {
   title: LocalisedText;
   excerpt: LocalisedText;
   imageLabel: LocalisedText;
+  image: PhotoAsset;
   tone: PhotoTone;
 };
 
 export type Destination = {
   slug: string;
   name: LocalisedText;
+  actionName?: LocalisedText;
   description: LocalisedText;
   imageLabel: LocalisedText;
+  image?: PhotoAsset;
   tone: PhotoTone;
 };
 
@@ -30,6 +40,7 @@ export type SeaPractice = {
   title: LocalisedText;
   text: LocalisedText;
   imageLabel: LocalisedText;
+  image: PhotoAsset;
   tone: PhotoTone;
 };
 
@@ -67,6 +78,11 @@ export const homeCopy = {
       budvaAction: "Explore Budva",
       imageLabel:
         "Hero placeholder — a captain preparing gear beside a small boat in early natural light",
+      image: {
+        src: "/images/home/hero-svitanje-bar.jpg",
+        alt: "Calm sea at dawn near Bar, seen from a small boat before the day begins.",
+        objectPosition: "50% 52%",
+      },
       imageNote:
         "Temporary photography slot. The final image will come from a real morning with a verified captain.",
     },
@@ -152,6 +168,11 @@ export const homeCopy = {
       budvaAction: "Istraži Budvu",
       imageLabel:
         "Mjesto za fotografiju — kapetan priprema opremu pored malog broda u ranom prirodnom svjetlu",
+      image: {
+        src: "/images/home/hero-svitanje-bar.jpg",
+        alt: "Mirno more u zoru kod Bara, viđeno sa malog broda prije početka dana.",
+        objectPosition: "50% 52%",
+      },
       imageNote:
         "Privremeno mjesto za fotografiju. Konačna slika doći će iz stvarnog jutra sa provjerenim kapetanom.",
     },
@@ -208,44 +229,38 @@ export const homeCopy = {
 
 export const captains: Captain[] = [
   {
-    name: "Milan V.",
-    location: { en: "Bar", cg: "Bar" },
-    languages: { en: "Montenegrin · English · Italian", cg: "Crnogorski · Engleski · Italijanski" },
+    name: { en: "Feta", cg: "Feta" },
     introduction: {
       en: "He begins with strong coffee, explains every knot without hurrying, and never pretends a quiet sea owes anyone a fish.",
       cg: "Počinje jakom kafom, objašnjava svaki čvor bez žurbe i nikad se ne ponaša kao da mirno more nekome duguje ribu.",
     },
     imageLabel: {
-      en: "Portrait placeholder — captain preparing lines before sunrise",
-      cg: "Mjesto za portret — kapetan priprema najlon prije izlaska sunca",
+      en: "Feta temporary profile photograph",
+      cg: "Fetina privremena profilna fotografija",
+    },
+    image: {
+      src: "/images/home/captain-feta-ulov-5.webp",
+      alt: {
+        en: "Feta on board with a catch, used as a temporary profile photograph.",
+        cg: "Feta na brodu sa ulovom, korišćeno kao privremena profilna fotografija.",
+      },
+      objectPosition: "50% 50%",
     },
     tone: "harbour",
   },
   {
-    name: "Jelena M.",
-    location: { en: "Budva", cg: "Budva" },
-    languages: { en: "Montenegrin · English", cg: "Crnogorski · Engleski" },
-    introduction: {
-      en: "She notices when a guest needs a story, when they need an explanation, and when the best thing on board is silence.",
-      cg: "Primijeti kada gostu treba priča, kada mu treba objašnjenje i kada je najbolja stvar na brodu tišina.",
-    },
+    name: { en: "Captain #2", cg: "Kapetan #2" },
     imageLabel: {
-      en: "Portrait placeholder — captain at the helm in natural light",
-      cg: "Mjesto za portret — kapetan za kormilom u prirodnom svjetlu",
+      en: "Neutral captain placeholder",
+      cg: "Neutralno mjesto za kapetana",
     },
     tone: "sea",
   },
   {
-    name: "Nikola R.",
-    location: { en: "Bar", cg: "Bar" },
-    languages: { en: "Montenegrin · English · German", cg: "Crnogorski · Engleski · Njemački" },
-    introduction: {
-      en: "On slow mornings he changes the rig, cuts fruit for the children and turns the waiting into a lesson about currents.",
-      cg: "Sporim jutrima mijenja sistem, siječe voće djeci i pretvara čekanje u lekciju o kurentima.",
-    },
+    name: { en: "Captain #3", cg: "Kapetan #3" },
     imageLabel: {
-      en: "Portrait placeholder — captain checking the morning weather",
-      cg: "Mjesto za portret — kapetan provjerava jutarnje vrijeme",
+      en: "Neutral captain placeholder",
+      cg: "Neutralno mjesto za kapetana",
     },
     tone: "dusk",
   },
@@ -262,6 +277,14 @@ export const stories: Story[] = [
       en: "Story placeholder — hands teaching a simple fishing knot",
       cg: "Mjesto za priču — ruke pokazuju jednostavan ribarski čvor",
     },
+    image: {
+      src: "/images/home/story-zalazak-sunca-bar-2.jpg",
+      alt: {
+        en: "Evening light over the sea near Bar, seen from a small boat.",
+        cg: "Večernje svjetlo nad morem kod Bara, viđeno sa malog broda.",
+      },
+      objectPosition: "50% 54%",
+    },
     tone: "stone",
   },
   {
@@ -274,6 +297,14 @@ export const stories: Story[] = [
       en: "Story placeholder — quiet open water beyond the boat",
       cg: "Mjesto za priču — mirno otvoreno more iza broda",
     },
+    image: {
+      src: "/images/home/experience-bar-stap-penudlanje.jpg",
+      alt: {
+        en: "A fishing rod set over the water during a day out near Bar.",
+        cg: "Ribarski štap postavljen iznad vode tokom dana na moru kod Bara.",
+      },
+      objectPosition: "52% 50%",
+    },
     tone: "sea",
   },
   {
@@ -285,6 +316,14 @@ export const stories: Story[] = [
     imageLabel: {
       en: "Story placeholder — coffee beside rope on a working boat",
       cg: "Mjesto za priču — kafa pored konopa na radnom brodu",
+    },
+    image: {
+      src: "/images/home/story-maljevik-bar.jpg",
+      alt: {
+        en: "A quiet coastal view at Maljevik, Bar.",
+        cg: "Miran pogled na obalu kod Maljevika, Bar.",
+      },
+      objectPosition: "50% 50%",
     },
     tone: "sand",
   },
@@ -302,11 +341,20 @@ export const destinations: Destination[] = [
       en: "Destination placeholder — Bar harbour in early morning light",
       cg: "Mjesto za destinaciju — barska luka u ranom jutarnjem svjetlu",
     },
+    image: {
+      src: "/images/home/destination-bar-panorama.jpg",
+      alt: {
+        en: "The Bar coastline seen from the water.",
+        cg: "Barska obala viđena sa mora.",
+      },
+      objectPosition: "50% 50%",
+    },
     tone: "harbour",
   },
   {
     slug: "budva",
     name: { en: "Budva", cg: "Budva" },
+    actionName: { en: "Budva", cg: "Budvu" },
     description: {
       en: "Small boats leave beside a waterfront that changes character before the streets fill. Here, local knowledge lives between the old coast and busy summer water.",
       cg: "Mali brodovi isplovljavaju pored obale koja promijeni lice prije nego što se ulice napune. Ovdje lokalno znanje živi između stare obale i užurbanog ljetnjeg mora.",
@@ -330,6 +378,14 @@ export const seaPractices: SeaPractice[] = [
       en: "Photography placeholder — hands collecting floating plastic",
       cg: "Mjesto za fotografiju — ruke skupljaju plastiku koja pluta",
     },
+    image: {
+      src: "/images/home/sea-respect-dobre-vode-bar.jpg",
+      alt: {
+        en: "Calm sea looking towards Dobre Vode, Bar.",
+        cg: "Mirno more prema Dobrim Vodama, Bar.",
+      },
+      objectPosition: "50% 50%",
+    },
     tone: "olive",
   },
   {
@@ -342,6 +398,14 @@ export const seaPractices: SeaPractice[] = [
       en: "Photography placeholder — two working boats with clear water between them",
       cg: "Mjesto za fotografiju — dva radna broda sa čistim morem između njih",
     },
+    image: {
+      src: "/images/home/sea-respect-ratac-bar.jpg",
+      alt: {
+        en: "Calm water and coast near Ratac, Bar.",
+        cg: "Mirno more i obala kod Ratca, Bar.",
+      },
+      objectPosition: "50% 50%",
+    },
     tone: "sea",
   },
   {
@@ -353,6 +417,14 @@ export const seaPractices: SeaPractice[] = [
     imageLabel: {
       en: "Photography placeholder — careful release beside a small boat",
       cg: "Mjesto za fotografiju — pažljivo puštanje ribe pored malog broda",
+    },
+    image: {
+      src: "/images/home/destination-bar-panorama.jpg",
+      alt: {
+        en: "The Bar coast seen quietly from the water.",
+        cg: "Barska obala mirno viđena sa mora.",
+      },
+      objectPosition: "50% 50%",
     },
     tone: "stone",
   },

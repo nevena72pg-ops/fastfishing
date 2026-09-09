@@ -45,8 +45,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
 
           <div className="relative lg:pl-5">
-            <PhotoPlaceholder className="aspect-[4/5] sm:aspect-[5/6] sm:min-h-[31rem] lg:min-h-[43rem]" label={copy.hero.imageLabel} priority tone="sea" />
-            <p className="mt-3 max-w-md text-xs leading-5 text-ink/52">{copy.hero.imageNote}</p>
+            <PhotoPlaceholder
+              className="aspect-[4/5] sm:aspect-[5/6] sm:min-h-[31rem] lg:min-h-[43rem]"
+              image={copy.hero.image}
+              label={copy.hero.imageLabel}
+              priority
+              sizes="(min-width: 1024px) 48vw, 100vw"
+              tone="sea"
+            />
           </div>
         </section>
 
@@ -94,7 +100,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <CaptainCard
                 actionLabel={copy.captains.action}
                 captain={captain}
-                key={captain.name}
+                key={localise(captain.name, locale)}
                 locale={locale}
                 verifiedLabel={copy.captains.verified}
               />
@@ -151,7 +157,17 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-6">
               {seaPractices.map((practice) => (
                 <figure key={localise(practice.title, locale)}>
-                  <PhotoPlaceholder className="aspect-[4/3] min-h-40 border-canvas/10 md:min-h-0 lg:min-h-56" label={localise(practice.imageLabel, locale)} tone={practice.tone} />
+                  <PhotoPlaceholder
+                    className="aspect-[4/3] min-h-40 border-canvas/10 md:min-h-0 lg:min-h-56"
+                    image={{
+                      alt: localise(practice.image.alt, locale),
+                      objectPosition: practice.image.objectPosition,
+                      src: practice.image.src,
+                    }}
+                    label={localise(practice.imageLabel, locale)}
+                    sizes="(min-width: 768px) 30vw, 100vw"
+                    tone={practice.tone}
+                  />
                   <figcaption className="pt-5">
                     <h3 className="font-serif text-2xl">{localise(practice.title, locale)}</h3>
                     <p className="mt-3 text-sm leading-6 text-canvas/62">{localise(practice.text, locale)}</p>

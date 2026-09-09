@@ -246,6 +246,15 @@ summary {
   background: linear-gradient(180deg, transparent 48%, rgb(14 31 32 / 0.6) 100%);
 }
 
+.photo-real {
+  background: var(--color-wash);
+}
+
+.photo-real::before,
+.photo-real::after {
+  display: none;
+}
+
 .photo-sea {
   background: linear-gradient(145deg, #b8c8c3 0%, #769294 42%, #294f55 100%);
 }
