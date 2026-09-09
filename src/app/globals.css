@@ -135,6 +135,24 @@ summary {
   background: rgb(24 49 50 / 0.04);
 }
 
+.button-sea-log {
+  min-height: 3.25rem;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid rgb(243 239 230 / 0.36);
+  padding: 0.8rem 1.05rem;
+  color: var(--color-canvas);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.045em;
+  transition: background-color 280ms ease, border-color 280ms ease, color 280ms ease;
+}
+
+.button-sea-log:hover {
+  border-color: rgb(243 239 230 / 0.68);
+  background: rgb(243 239 230 / 0.08);
+}
+
 .text-link {
   border-bottom: 1px solid rgb(24 49 50 / 0.35);
   padding-bottom: 0.2rem;
@@ -146,6 +164,42 @@ summary {
 .text-link:hover,
 .nav-link:hover {
   color: var(--color-rust);
+}
+
+.language-switcher {
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgb(24 49 50 / 0.16);
+  border-radius: 999px;
+  background: rgb(223 231 226 / 0.54);
+  padding: 0.22rem;
+  color: var(--color-ink);
+  font-size: 0.72rem;
+}
+
+.language-option {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.36rem 0.7rem;
+  color: rgb(24 49 50 / 0.62);
+  transition: background-color 260ms ease, border-color 260ms ease, color 260ms ease;
+}
+
+.language-option:hover {
+  border-color: rgb(24 49 50 / 0.22);
+  background: rgb(243 239 230 / 0.75);
+  color: var(--color-ink);
+}
+
+.language-option[aria-current="page"] {
+  border-color: rgb(24 49 50 / 0.22);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  box-shadow: 0 1px 3px rgb(24 49 50 / 0.08);
 }
 
 .nav-link,

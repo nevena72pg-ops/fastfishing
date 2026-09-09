@@ -4,37 +4,49 @@ import { CaptainCard, DestinationCard, StoryCard } from "@/components/home-cards
 import { PhotoPlaceholder } from "@/components/photo-placeholder";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { captains, destinations, seaPractices, stories } from "@/content/home";
+import { captains, destinations, getHomeCopy, seaPractices, stories } from "@/content/home";
+import { locales, localise, resolveLocale } from "@/content/i18n";
 
-export default function HomePage() {
+type HomePageProps = {
+  searchParams?: Promise<{
+    lang?: string | string[];
+  }>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const params = await searchParams;
+  const locale = resolveLocale(params?.lang);
+  const copy = getHomeCopy(locale);
+  const htmlLang = locales[locale].htmlLang;
+
   return (
     <>
-      <a className="skip-link" href="#main-content">Skip to content</a>
+      <a className="skip-link" href="#main-content">{copy.skipLink}</a>
       <div id="top" />
-      <SiteHeader />
+      <SiteHeader locale={locale} />
 
-      <main id="main-content">
+      <main id="main-content" lang={htmlLang}>
         <section aria-labelledby="hero-heading" className="page-shell grid gap-10 pb-20 pt-10 sm:pt-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16 lg:pb-28 lg:pt-16">
           <div className="max-w-2xl lg:py-12">
-            <p className="eyebrow">Bar &amp; Budva · Montenegro</p>
+            <p className="eyebrow">{copy.hero.eyebrow}</p>
             <h1 id="hero-heading" className="mt-5 max-w-[12ch] font-serif text-[clamp(3.4rem,7vw,7rem)] leading-[0.93] tracking-[-0.055em] text-ink">
-              Choose the person who knows the sea.
+              {copy.hero.heading}
             </h1>
             <p className="mt-7 max-w-xl text-lg leading-8 text-ink/72 sm:text-xl sm:leading-9">
-              Meet local captains we know personally. Learn how they fish, teach, cook and care for these waters—then speak with them directly.
+              {copy.hero.body}
             </p>
             <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link className="button-primary focus-ring w-full sm:w-auto" href="#captains">
-                Meet the Captains <ArrowIcon className="size-5" />
+                {copy.hero.primaryAction} <ArrowIcon className="size-5" />
               </Link>
-              <Link className="button-secondary focus-ring w-full sm:w-auto" href="#bar">Explore Bar</Link>
-              <Link className="button-secondary focus-ring w-full sm:w-auto" href="#budva">Explore Budva</Link>
+              <Link className="button-secondary focus-ring w-full sm:w-auto" href="#bar">{copy.hero.barAction}</Link>
+              <Link className="button-secondary focus-ring w-full sm:w-auto" href="#budva">{copy.hero.budvaAction}</Link>
             </div>
           </div>
 
           <div className="relative lg:pl-5">
-            <PhotoPlaceholder className="aspect-[4/5] sm:aspect-[5/6] sm:min-h-[31rem] lg:min-h-[43rem]" label="Hero placeholder — a captain preparing gear beside a small boat in early natural light" priority tone="sea" />
-            <p className="mt-3 max-w-md text-xs leading-5 text-ink/52">Temporary photography slot. The final image will come from a real morning with a verified captain.</p>
+            <PhotoPlaceholder className="aspect-[4/5] sm:aspect-[5/6] sm:min-h-[31rem] lg:min-h-[43rem]" label={copy.hero.imageLabel} priority tone="sea" />
+            <p className="mt-3 max-w-md text-xs leading-5 text-ink/52">{copy.hero.imageNote}</p>
           </div>
         </section>
 
@@ -42,20 +54,20 @@ export default function HomePage() {
           <div className="page-shell">
             <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
-                <p className="eyebrow">Trust before conversation</p>
-                <h2 id="trust-heading" className="section-title mt-4">Known personally.<br />Represented honestly.</h2>
+                <p className="eyebrow">{copy.trust.eyebrow}</p>
+                <h2 id="trust-heading" className="section-title mt-4">
+                  {copy.trust.heading.split("\n").map((line) => (
+                    <span key={line}>{line}<br /></span>
+                  ))}
+                </h2>
               </div>
               <p className="max-w-2xl self-end text-lg leading-8 text-ink/70">
-                A photograph of a boat tells very little about the person at the helm. We meet every captain, check what matters and write each profile from a real conversation.
+                {copy.trust.body}
               </p>
             </div>
 
             <ol className="mt-14 grid border-y border-ink/15 md:grid-cols-3 md:divide-x md:divide-ink/15">
-              {[
-                ["01", "We meet", "Time in the marina, on the boat and in conversation comes before publication."],
-                ["02", "We verify", "Identity, vessel, safety, experience and public claims are checked and reviewed."],
-                ["03", "You speak directly", "FishWithLocals makes the introduction. Captain and guest decide together what feels right."],
-              ].map(([number, title, text]) => (
+              {copy.trust.steps.map(([number, title, text]) => (
                 <li className="py-7 md:px-8 md:py-9 first:md:pl-0 last:md:pr-0" key={number}>
                   <span className="text-xs tracking-[0.16em] text-ink/42">{number}</span>
                   <h3 className="mt-4 font-serif text-2xl">{title}</h3>
@@ -69,16 +81,24 @@ export default function HomePage() {
         <section aria-labelledby="captains-heading" className="page-shell py-20 md:py-28" id="captains">
           <div className="section-intro">
             <div>
-              <p className="eyebrow">The people at the helm</p>
-              <h2 className="section-title mt-4" id="captains-heading">Meet the captains</h2>
+              <p className="eyebrow">{copy.captains.eyebrow}</p>
+              <h2 className="section-title mt-4" id="captains-heading">{copy.captains.heading}</h2>
             </div>
             <div className="max-w-xl">
-              <p className="text-lg leading-8 text-ink/70">Choose a person whose temperament, knowledge and way of sharing the sea feel right for you.</p>
-              <p className="mt-3 text-sm leading-6 text-ink/50">Prototype profiles: names, words and photographs will be replaced after real conversations and verification.</p>
+              <p className="text-lg leading-8 text-ink/70">{copy.captains.body}</p>
+              <p className="mt-3 text-sm leading-6 text-ink/50">{copy.captains.note}</p>
             </div>
           </div>
           <div className="mt-14 grid gap-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-            {captains.map((captain) => <CaptainCard captain={captain} key={captain.name} />)}
+            {captains.map((captain) => (
+              <CaptainCard
+                actionLabel={copy.captains.action}
+                captain={captain}
+                key={captain.name}
+                locale={locale}
+                verifiedLabel={copy.captains.verified}
+              />
+            ))}
           </div>
         </section>
 
@@ -86,15 +106,17 @@ export default function HomePage() {
           <div className="page-shell">
             <div className="section-intro">
               <div>
-                <p className="eyebrow">Things worth remembering</p>
-                <h2 className="section-title mt-4" id="stories-heading">Stories from the water</h2>
+                <p className="eyebrow">{copy.stories.eyebrow}</p>
+                <h2 className="section-title mt-4" id="stories-heading">{copy.stories.heading}</h2>
               </div>
-              <p className="max-w-xl text-lg leading-8 text-ink/70">Not every story needs a large catch. Sometimes the moment that stays is a lesson, a change in weather, or the silence after something passes beneath the boat.</p>
+              <p className="max-w-xl text-lg leading-8 text-ink/70">{copy.stories.body}</p>
             </div>
             <div className="mt-14">
-              <StoryCard featured story={stories[0]} />
+              <StoryCard actionLabel={copy.stories.action} featured locale={locale} story={stories[0]} />
               <div className="mt-16 grid gap-14 border-t border-ink/15 pt-10 md:grid-cols-2 md:gap-8">
-                {stories.slice(1).map((story) => <StoryCard key={story.title} story={story} />)}
+                {stories.slice(1).map((story) => (
+                  <StoryCard actionLabel={copy.stories.action} key={localise(story.title, locale)} locale={locale} story={story} />
+                ))}
               </div>
             </div>
           </div>
@@ -103,15 +125,15 @@ export default function HomePage() {
         <section aria-labelledby="destinations-heading" className="page-shell py-20 md:py-28" id="destinations">
           <div className="section-intro">
             <div>
-              <p className="eyebrow">Two places, their own rhythms</p>
-              <h2 className="section-title mt-4" id="destinations-heading">Bar and Budva</h2>
+              <p className="eyebrow">{copy.destinations.eyebrow}</p>
+              <h2 className="section-title mt-4" id="destinations-heading">{copy.destinations.heading}</h2>
             </div>
-            <p className="max-w-xl text-lg leading-8 text-ink/70">Destinations are more than departure points. They hold working mornings, local food, remembered weather and people who have learnt these waters over time.</p>
+            <p className="max-w-xl text-lg leading-8 text-ink/70">{copy.destinations.body}</p>
           </div>
           <div className="mt-14 grid gap-16 lg:grid-cols-2 lg:gap-8">
             {destinations.map((destination) => (
-              <div id={destination.name.toLowerCase()} key={destination.name}>
-                <DestinationCard destination={destination} />
+              <div id={destination.slug} key={destination.slug}>
+                <DestinationCard actionLabel={copy.destinations.action} destination={destination} locale={locale} />
               </div>
             ))}
           </div>
@@ -121,39 +143,49 @@ export default function HomePage() {
           <div className="page-shell">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
               <div>
-                <p className="eyebrow text-canvas/55">Respect in ordinary actions</p>
-                <h2 className="section-title mt-4 text-canvas" id="sea-heading">The sea is not a backdrop.</h2>
+                <p className="eyebrow text-canvas/55">{copy.sea.eyebrow}</p>
+                <h2 className="section-title mt-4 text-canvas" id="sea-heading">{copy.sea.heading}</h2>
               </div>
-              <p className="max-w-2xl self-end text-lg leading-8 text-canvas/68">Responsible fishing is not a badge. It appears in what a captain keeps, what they release, what they bring back to shore and how much room they leave for others.</p>
+              <p className="max-w-2xl self-end text-lg leading-8 text-canvas/68">{copy.sea.body}</p>
             </div>
             <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-6">
               {seaPractices.map((practice) => (
-                <figure key={practice.title}>
-                  <PhotoPlaceholder className="aspect-[4/3] min-h-40 md:min-h-0 lg:min-h-56 border-canvas/10" label={practice.imageLabel} tone={practice.tone} />
+                <figure key={localise(practice.title, locale)}>
+                  <PhotoPlaceholder className="aspect-[4/3] min-h-40 border-canvas/10 md:min-h-0 lg:min-h-56" label={localise(practice.imageLabel, locale)} tone={practice.tone} />
                   <figcaption className="pt-5">
-                    <h3 className="font-serif text-2xl">{practice.title}</h3>
-                    <p className="mt-3 text-sm leading-6 text-canvas/62">{practice.text}</p>
+                    <h3 className="font-serif text-2xl">{localise(practice.title, locale)}</h3>
+                    <p className="mt-3 text-sm leading-6 text-canvas/62">{localise(practice.text, locale)}</p>
                   </figcaption>
                 </figure>
               ))}
             </div>
+            <aside className="mt-16 grid gap-7 border border-canvas/15 bg-canvas/6 p-6 sm:p-8 lg:grid-cols-[0.45fr_1fr_auto] lg:items-end lg:gap-10" aria-labelledby="sea-log-heading">
+              <p className="eyebrow text-canvas/55">{copy.seaLog.title}</p>
+              <div>
+                <h3 className="font-serif text-3xl leading-tight tracking-tight text-canvas" id="sea-log-heading">{copy.seaLog.heading}</h3>
+                <p className="mt-4 max-w-3xl text-sm leading-7 text-canvas/68">{copy.seaLog.body}</p>
+              </div>
+              <Link className="button-sea-log focus-ring inline-flex justify-center" href={copy.seaLog.href}>
+                {copy.seaLog.action} <ArrowIcon className="size-5" />
+              </Link>
+            </aside>
           </div>
         </section>
 
         <section aria-labelledby="invitation-heading" className="page-shell py-24 text-center md:py-36" id="final-invitation">
           <VerifiedIcon className="mx-auto size-8 text-rust" />
-          <p className="eyebrow mt-6">A conversation, not a checkout</p>
+          <p className="eyebrow mt-6">{copy.invitation.eyebrow}</p>
           <h2 className="mx-auto mt-5 max-w-[14ch] font-serif text-[clamp(2.8rem,5vw,5.5rem)] leading-[1.02] tracking-[-0.045em]" id="invitation-heading">
-            Find the person you would like to spend a day with.
+            {copy.invitation.heading}
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-ink/68">Take your time. Read their stories. When someone feels right, start a direct conversation about the day.</p>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-ink/68">{copy.invitation.body}</p>
           <Link className="button-primary focus-ring mt-9 inline-flex" href="#captains">
-            Meet the Captains <ArrowIcon className="size-5" />
+            {copy.invitation.action} <ArrowIcon className="size-5" />
           </Link>
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter locale={locale} />
     </>
   );
 }
