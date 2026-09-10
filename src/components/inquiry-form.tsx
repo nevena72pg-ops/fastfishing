@@ -11,6 +11,9 @@ type InquiryFormProps = {
 
 export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const copy = locale === "cg"
     ? {
@@ -32,8 +35,11 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         durations: ["2 sata", "3 sata", "4 sata", "6 sati", "Cijeli dan"],
         contactMethods: ["WhatsApp", "Viber", "Telefon"],
         send: "Pošalji upit",
-        successTitle: "Upit je zabilježen.",
-        successBody: "Ovo je testna verzija obrasca. Prije javnog puštanja povezujemo ga sa trajnim čuvanjem i dostavom upita.",
+        sending: "Šaljem upit…",
+        successTitle: "Upit je primljen.",
+        successBody: "FishWithLocals će proslijediti upit kapetanu. Kada ga kapetan preuzme, dalje komunicirate direktno.",
+        reference: "Broj upita",
+        error: "Upit trenutno nije mogao biti poslat. Pokušaj ponovo za nekoliko trenutaka.",
         back: "Nazad na kapetane",
       }
     : {
@@ -55,14 +61,43 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         durations: ["2 hours", "3 hours", "4 hours", "6 hours", "Full day"],
         contactMethods: ["WhatsApp", "Viber", "Phone"],
         send: "Send inquiry",
-        successTitle: "Inquiry recorded.",
-        successBody: "This is the test version of the form. Before public launch, it will be connected to persistent storage and delivery.",
+        sending: "Sending inquiry…",
+        successTitle: "Inquiry received.",
+        successBody: "FishWithLocals will forward the inquiry to the captain. Once the captain accepts it, you continue the conversation directly.",
+        reference: "Inquiry reference",
+        error: "The inquiry could not be sent right now. Please try again in a moment.",
         back: "Back to captains",
       };
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setIsSubmitting(true);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Submission failed");
+      }
+
+      const result = await response.json() as { reference?: string };
+      setReference(result.reference ?? null);
+      setSubmitted(true);
+      form.reset();
+    } catch {
+      setError(copy.error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const inputClass = "min-h-12 w-full rounded-none border border-ink/20 bg-canvas px-4 py-3 text-base focus-ring";
@@ -77,6 +112,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         <section className="mt-8 border border-ink/15 bg-wash p-6 sm:p-7 md:p-9" aria-live="polite">
           <h2 className="font-serif text-3xl">{copy.successTitle}</h2>
           <p className="mt-4 leading-7 text-ink/70">{copy.successBody}</p>
+          {reference ? <p className="mt-4 text-sm font-medium text-ink/75">{copy.reference}: {reference}</p> : null}
           <Link className="button-primary focus-ring mt-7 inline-flex w-full justify-center sm:w-auto" href={locale === "cg" ? "/?lang=cg#captains" : "/#captains"}>{copy.back}</Link>
         </section>
       ) : (
@@ -142,7 +178,11 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
             <textarea className={`${inputClass} min-h-32 resize-y`} name="note" />
           </label>
 
-          <button className="button-primary focus-ring mt-1 w-full justify-center sm:mt-2 sm:w-fit" type="submit">{copy.send}</button>
+          {error ? <p className="text-sm font-medium text-ink" role="alert">{error}</p> : null}
+
+          <button className="button-primary focus-ring mt-1 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60 sm:mt-2 sm:w-fit" disabled={isSubmitting} type="submit">
+            {isSubmitting ? copy.sending : copy.send}
+          </button>
         </form>
       )}
     </div>
