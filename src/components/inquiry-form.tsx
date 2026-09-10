@@ -24,14 +24,13 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         people: "Broj osoba",
         experience: "Vrsta iskustva",
         name: "Ime i prezime",
-        email: "Email",
-        phone: "Telefon",
+        phone: "Broj telefona",
         preferredContact: "Kako želiš da te kapetan kontaktira?",
         note: "Napomena",
         choose: "Izaberi",
         experiences: ["Ribolov", "Porodični izlazak", "Početnici / učenje", "Izlazak na more", "Drugo"],
         durations: ["2 sata", "3 sata", "4 sata", "6 sati", "Cijeli dan"],
-        contactMethods: ["WhatsApp", "Viber", "Telefon", "Email"],
+        contactMethods: ["WhatsApp", "Viber", "Telefon"],
         send: "Pošalji upit",
         successTitle: "Upit je zabilježen.",
         successBody: "Ovo je testna verzija obrasca. Prije javnog puštanja povezujemo ga sa trajnim čuvanjem i dostavom upita.",
@@ -48,14 +47,13 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         people: "Number of guests",
         experience: "Type of experience",
         name: "Full name",
-        email: "Email",
-        phone: "Phone",
+        phone: "Phone number",
         preferredContact: "How would you like the captain to contact you?",
         note: "Note",
         choose: "Choose",
         experiences: ["Fishing", "Family outing", "Beginners / learning", "Time at sea", "Other"],
         durations: ["2 hours", "3 hours", "4 hours", "6 hours", "Full day"],
-        contactMethods: ["WhatsApp", "Viber", "Phone", "Email"],
+        contactMethods: ["WhatsApp", "Viber", "Phone"],
         send: "Send inquiry",
         successTitle: "Inquiry recorded.",
         successBody: "This is the test version of the form. Before public launch, it will be connected to persistent storage and delivery.",
@@ -126,16 +124,10 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
             <input className={inputClass} name="guestName" autoComplete="name" required />
           </label>
 
-          <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-            <label className="grid gap-2 text-sm font-medium">
-              {copy.email}
-              <input className={inputClass} name="email" type="email" autoComplete="email" inputMode="email" required />
-            </label>
-            <label className="grid gap-2 text-sm font-medium">
-              {copy.phone}
-              <input className={inputClass} name="phone" type="tel" autoComplete="tel" inputMode="tel" required />
-            </label>
-          </div>
+          <label className="grid gap-2 text-sm font-medium">
+            {copy.phone}
+            <input className={inputClass} name="phone" type="tel" autoComplete="tel" inputMode="tel" required />
+          </label>
 
           <label className="grid gap-2 text-sm font-medium">
             {copy.preferredContact}
