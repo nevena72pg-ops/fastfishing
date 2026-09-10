@@ -95,7 +95,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <p className="mt-3 text-sm leading-6 text-ink/50">{copy.captains.note}</p>
             </div>
           </div>
-          <div className="mt-14 grid gap-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+          <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-8">
             {captains.map((captain) => (
               <CaptainCard
                 actionLabel={copy.captains.action}
