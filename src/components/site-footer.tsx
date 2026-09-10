@@ -8,6 +8,7 @@ type SiteFooterProps = {
 
 export function SiteFooter({ locale }: SiteFooterProps) {
   const copy = homeCopy[locale].footer;
+  const publicLinks = copy.links.filter(([, href]) => !href.startsWith("/docs/") && !href.startsWith("mailto:"));
 
   return (
     <footer className="border-t border-canvas/15 bg-ink text-canvas">
@@ -18,7 +19,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
         </div>
         <nav aria-label={copy.navLabel}>
           <ul className="grid gap-3 text-sm text-canvas/78 sm:grid-cols-2 sm:gap-x-8 md:text-right">
-            {copy.links.map(([label, href]) => (
+            {publicLinks.map(([label, href]) => (
               <li key={href}><Link className="footer-link focus-ring" href={href}>{label}</Link></li>
             ))}
           </ul>
