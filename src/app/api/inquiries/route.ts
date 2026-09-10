@@ -6,6 +6,7 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
 const TWILIO_WHATSAPP_TEST_TO = process.env.TWILIO_WHATSAPP_TEST_TO;
+const TWILIO_WHATSAPP_CONTENT_SID = process.env.TWILIO_WHATSAPP_CONTENT_SID;
 
 type CaptainRecord = {
   id: string;
@@ -101,8 +102,13 @@ async function sendWhatsApp(to: string, body: string) {
   const form = new URLSearchParams({
     To: to.startsWith("whatsapp:") ? to : `whatsapp:${to}`,
     From: TWILIO_WHATSAPP_FROM,
-    Body: body,
   });
+
+  if (TWILIO_WHATSAPP_CONTENT_SID) {
+    form.set("ContentSid", TWILIO_WHATSAPP_CONTENT_SID);
+  } else {
+    form.set("Body", body);
+  }
 
   const response = await fetch(
     `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
