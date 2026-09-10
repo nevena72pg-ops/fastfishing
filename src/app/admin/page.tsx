@@ -12,9 +12,12 @@ type Inquiry = {
   guest_phone: string;
   preferred_contact: string;
   note: string | null;
-  status: "received" | "forwarded" | "accepted" | "closed";
+  status: "received" | "forwarded" | "accepted" | "taken_over" | "unavailable" | "closed";
   forwarded_at: string | null;
   accepted_at: string | null;
+  captain_responded_at: string | null;
+  unavailable_at: string | null;
+  captain_response: string | null;
   closed_at: string | null;
   created_at: string;
 };
@@ -23,6 +26,8 @@ const statusLabels: Record<Inquiry["status"], string> = {
   received: "Novi upit",
   forwarded: "Proslijeđen kapetanu",
   accepted: "Kapetan preuzeo",
+  taken_over: "Kapetan preuzeo komunikaciju",
+  unavailable: "Kapetan nije dostupan",
   closed: "Zatvoren",
 };
 
@@ -51,6 +56,9 @@ async function loadInquiries(): Promise<Inquiry[]> {
     "status",
     "forwarded_at",
     "accepted_at",
+    "captain_responded_at",
+    "unavailable_at",
+    "captain_response",
     "closed_at",
     "created_at",
   ].join(",");
@@ -138,6 +146,13 @@ export default async function AdminPage() {
                     <p className="mt-1 text-sm leading-6 text-ink/75">{inquiry.note || "—"}</p>
                   </div>
                 </div>
+
+                {inquiry.captain_response && (
+                  <div className="mt-5 border-t border-ink/10 pt-5">
+                    <p className="text-xs uppercase tracking-[0.12em] text-ink/45">Odgovor kapetana</p>
+                    <p className="mt-1 text-sm leading-6 text-ink/75">{inquiry.captain_response}</p>
+                  </div>
+                )}
 
                 <div className="mt-6 flex flex-wrap gap-3 border-t border-ink/10 pt-5">
                   {inquiry.status === "received" && (
