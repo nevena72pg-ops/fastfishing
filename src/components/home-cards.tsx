@@ -11,8 +11,10 @@ type CaptainCardProps = {
   verifiedLabel: string;
 };
 
-export function CaptainCard({ actionLabel, captain, locale, verifiedLabel }: CaptainCardProps) {
+export function CaptainCard({ captain, locale, verifiedLabel }: CaptainCardProps) {
   const name = localise(captain.name, locale);
+  const inquiryLabel = locale === "cg" ? "Pošalji upit kapetanu" : "Send an inquiry to the captain";
+  const inquiryHref = `/inquiry?captain=${encodeURIComponent(name)}${locale === "cg" ? "&lang=cg" : ""}`;
 
   if (!captain.image || !captain.introduction) {
     return (
@@ -49,8 +51,8 @@ export function CaptainCard({ actionLabel, captain, locale, verifiedLabel }: Cap
         </div>
         <p className="mt-4 text-[0.97rem] leading-7 text-ink/76">{localise(captain.introduction, locale)}</p>
         {captain.languages ? <p className="mt-4 text-xs tracking-wide text-ink/55">{localise(captain.languages, locale)}</p> : null}
-        <Link className="text-link focus-ring mt-6 inline-flex items-center gap-2" href="#final-invitation">
-          {actionLabel} <ArrowIcon className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
+        <Link className="text-link focus-ring mt-6 inline-flex items-center gap-2" href={inquiryHref}>
+          {inquiryLabel} <ArrowIcon className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       </div>
     </article>
