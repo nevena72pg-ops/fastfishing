@@ -8,7 +8,15 @@ type SiteFooterProps = {
 
 export function SiteFooter({ locale }: SiteFooterProps) {
   const copy = homeCopy[locale].footer;
-  const publicLinks = copy.links.filter(([, href]) => !href.startsWith("/docs/") && !href.startsWith("mailto:"));
+  const publicLinks = copy.links
+    .filter(([, href]) => !href.startsWith("/docs/") && !href.startsWith("mailto:"))
+    .map(([label, href]) => {
+      if (!href.startsWith("#")) {
+        return [label, href] as const;
+      }
+
+      return [label, locale === "cg" ? `/?lang=cg${href}` : `/${href}`] as const;
+    });
 
   return (
     <footer className="border-t border-canvas/15 bg-ink text-canvas">
