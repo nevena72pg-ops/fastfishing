@@ -4,7 +4,14 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function makeReference() {
-  const stamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
+  const stamp = new Date()
+    .toISOString()
+    .replaceAll("-", "")
+    .replaceAll(":", "")
+    .replaceAll("T", "")
+    .replaceAll("Z", "")
+    .replaceAll(".", "")
+    .slice(0, 14);
   const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `FWL-${stamp}-${suffix}`;
 }
