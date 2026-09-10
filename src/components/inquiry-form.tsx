@@ -24,11 +24,14 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         people: "Broj osoba",
         experience: "Vrsta iskustva",
         name: "Ime i prezime",
-        contact: "Kontakt email ili telefon",
+        email: "Email",
+        phone: "Telefon",
+        preferredContact: "Kako želiš da te kapetan kontaktira?",
         note: "Napomena",
         choose: "Izaberi",
         experiences: ["Ribolov", "Porodični izlazak", "Početnici / učenje", "Izlazak na more", "Drugo"],
         durations: ["2 sata", "3 sata", "4 sata", "6 sati", "Cijeli dan"],
+        contactMethods: ["WhatsApp", "Viber", "Telefon", "Email"],
         send: "Pošalji upit",
         successTitle: "Upit je zabilježen.",
         successBody: "Ovo je testna verzija obrasca. Prije javnog puštanja povezujemo ga sa trajnim čuvanjem i dostavom upita.",
@@ -45,11 +48,14 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         people: "Number of guests",
         experience: "Type of experience",
         name: "Full name",
-        contact: "Contact email or phone",
+        email: "Email",
+        phone: "Phone",
+        preferredContact: "How would you like the captain to contact you?",
         note: "Note",
         choose: "Choose",
         experiences: ["Fishing", "Family outing", "Beginners / learning", "Time at sea", "Other"],
         durations: ["2 hours", "3 hours", "4 hours", "6 hours", "Full day"],
+        contactMethods: ["WhatsApp", "Viber", "Phone", "Email"],
         send: "Send inquiry",
         successTitle: "Inquiry recorded.",
         successBody: "This is the test version of the form. Before public launch, it will be connected to persistent storage and delivery.",
@@ -61,53 +67,55 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
     setSubmitted(true);
   }
 
+  const inputClass = "min-h-12 w-full rounded-none border border-ink/20 bg-canvas px-4 py-3 text-base focus-ring";
+
   return (
     <div className="mx-auto max-w-3xl">
       <p className="eyebrow">{copy.eyebrow}</p>
-      <h1 className="mt-4 font-serif text-5xl leading-tight tracking-tight md:text-6xl">{copy.heading}</h1>
-      <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/70">{copy.intro}</p>
+      <h1 className="mt-4 font-serif text-[clamp(2.6rem,11vw,4rem)] leading-[1.02] tracking-tight">{copy.heading}</h1>
+      <p className="mt-5 max-w-2xl text-base leading-7 text-ink/70 sm:text-lg sm:leading-8">{copy.intro}</p>
 
       {submitted ? (
-        <section className="mt-10 border border-ink/15 bg-wash p-7 md:p-9" aria-live="polite">
+        <section className="mt-8 border border-ink/15 bg-wash p-6 sm:p-7 md:p-9" aria-live="polite">
           <h2 className="font-serif text-3xl">{copy.successTitle}</h2>
           <p className="mt-4 leading-7 text-ink/70">{copy.successBody}</p>
-          <Link className="button-primary focus-ring mt-7 inline-flex" href={locale === "cg" ? "/?lang=cg#captains" : "/#captains"}>{copy.back}</Link>
+          <Link className="button-primary focus-ring mt-7 inline-flex w-full justify-center sm:w-auto" href={locale === "cg" ? "/?lang=cg#captains" : "/#captains"}>{copy.back}</Link>
         </section>
       ) : (
-        <form className="mt-10 grid gap-6 border-t border-ink/15 pt-8" onSubmit={handleSubmit}>
+        <form className="mt-8 grid gap-5 border-t border-ink/15 pt-7 sm:gap-6 sm:pt-8" onSubmit={handleSubmit}>
           <label className="grid gap-2 text-sm font-medium">
             {copy.captain}
-            <input className="border border-ink/20 bg-wash px-4 py-3 text-base" name="captain" value={captain} readOnly />
+            <input className={`${inputClass} bg-wash`} name="captain" value={captain} readOnly />
           </label>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <label className="grid gap-2 text-sm font-medium">
               {copy.date}
-              <input className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="date" type="date" required />
+              <input className={inputClass} name="date" type="date" required />
             </label>
             <label className="grid gap-2 text-sm font-medium">
               {copy.time}
-              <input className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="time" type="time" required />
+              <input className={inputClass} name="time" type="time" required />
             </label>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <label className="grid gap-2 text-sm font-medium">
               {copy.duration}
-              <select className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="duration" defaultValue="" required>
+              <select className={inputClass} name="duration" defaultValue="" required>
                 <option value="" disabled>{copy.choose}</option>
                 {copy.durations.map((item) => <option key={item} value={item}>{item}</option>)}
               </select>
             </label>
             <label className="grid gap-2 text-sm font-medium">
               {copy.people}
-              <input className="border border-ink/20 bg-canvas px-4 py-3 text-base" min="1" max="20" name="people" type="number" required />
+              <input className={inputClass} inputMode="numeric" min="1" name="people" type="number" required />
             </label>
           </div>
 
           <label className="grid gap-2 text-sm font-medium">
             {copy.experience}
-            <select className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="experience" defaultValue="" required>
+            <select className={inputClass} name="experience" defaultValue="" required>
               <option value="" disabled>{copy.choose}</option>
               {copy.experiences.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
@@ -115,20 +123,34 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
 
           <label className="grid gap-2 text-sm font-medium">
             {copy.name}
-            <input className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="guestName" autoComplete="name" required />
+            <input className={inputClass} name="guestName" autoComplete="name" required />
           </label>
 
+          <div className="grid gap-5 md:grid-cols-2 md:gap-6">
+            <label className="grid gap-2 text-sm font-medium">
+              {copy.email}
+              <input className={inputClass} name="email" type="email" autoComplete="email" inputMode="email" required />
+            </label>
+            <label className="grid gap-2 text-sm font-medium">
+              {copy.phone}
+              <input className={inputClass} name="phone" type="tel" autoComplete="tel" inputMode="tel" required />
+            </label>
+          </div>
+
           <label className="grid gap-2 text-sm font-medium">
-            {copy.contact}
-            <input className="border border-ink/20 bg-canvas px-4 py-3 text-base" name="contact" required />
+            {copy.preferredContact}
+            <select className={inputClass} name="preferredContact" defaultValue="" required>
+              <option value="" disabled>{copy.choose}</option>
+              {copy.contactMethods.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
           </label>
 
           <label className="grid gap-2 text-sm font-medium">
             {copy.note}
-            <textarea className="min-h-32 border border-ink/20 bg-canvas px-4 py-3 text-base" name="note" />
+            <textarea className={`${inputClass} min-h-32 resize-y`} name="note" />
           </label>
 
-          <button className="button-primary focus-ring mt-2 w-fit" type="submit">{copy.send}</button>
+          <button className="button-primary focus-ring mt-1 w-full justify-center sm:mt-2 sm:w-fit" type="submit">{copy.send}</button>
         </form>
       )}
     </div>
