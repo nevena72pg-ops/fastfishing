@@ -18,7 +18,11 @@ export default async function InquiryPage({ searchParams }: InquiryPageProps) {
 
   return (
     <>
-      <SiteHeader languageBasePath="/inquiry" locale={locale} />
+      <SiteHeader
+        languageBasePath="/inquiry"
+        languageParams={captainParam ? { captain: captainParam } : {}}
+        locale={locale}
+      />
       <main className="page-shell py-16 md:py-24">
         <InquiryForm captain={captain} locale={locale} />
       </main>
