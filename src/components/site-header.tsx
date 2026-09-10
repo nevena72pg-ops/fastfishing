@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { homeCopy } from "@/content/home";
-import { languageHref, locales, type Locale } from "@/content/i18n";
+import { locales, type Locale } from "@/content/i18n";
 
 type SiteHeaderProps = {
   languageBasePath?: string;
+  languageParams?: Record<string, string>;
   locale: Locale;
 };
 
-export function SiteHeader({ languageBasePath = "/", locale }: SiteHeaderProps) {
+export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale }: SiteHeaderProps) {
   const copy = homeCopy[locale];
   const sectionHref = (href: string) => {
     if (languageBasePath === "/") {
@@ -15,6 +16,19 @@ export function SiteHeader({ languageBasePath = "/", locale }: SiteHeaderProps) 
     }
 
     return locale === "cg" ? `/?lang=cg${href}` : `/${href}`;
+  };
+
+  const languageHref = (language: Locale) => {
+    const params = new URLSearchParams(languageParams);
+
+    if (language === "cg") {
+      params.set("lang", "cg");
+    } else {
+      params.delete("lang");
+    }
+
+    const query = params.toString();
+    return query ? `${languageBasePath}?${query}` : languageBasePath;
   };
 
   return (
@@ -40,7 +54,7 @@ export function SiteHeader({ languageBasePath = "/", locale }: SiteHeaderProps) 
               aria-current={language === locale ? "page" : undefined}
               aria-label={locales[language].languageName}
               className="language-option focus-ring"
-              href={languageHref(language, languageBasePath)}
+              href={languageHref(language)}
               key={language}
               hrefLang={language === "cg" ? "cnr-Latn-ME" : "en"}
             >
@@ -64,7 +78,7 @@ export function SiteHeader({ languageBasePath = "/", locale }: SiteHeaderProps) 
                     aria-current={language === locale ? "page" : undefined}
                     aria-label={locales[language].languageName}
                     className="language-option focus-ring"
-                    href={languageHref(language, languageBasePath)}
+                    href={languageHref(language)}
                     key={language}
                     hrefLang={language === "cg" ? "cnr-Latn-ME" : "en"}
                   >
