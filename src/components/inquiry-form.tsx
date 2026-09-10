@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Locale } from "@/content/i18n";
 
@@ -14,6 +14,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const [reference, setReference] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
 
   const copy = locale === "cg"
     ? {
@@ -63,7 +64,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         send: "Send inquiry",
         sending: "Sending inquiry…",
         successTitle: "Inquiry received.",
-        successBody: "FishWithLocals will forward the inquiry to the captain. Once the captain accepts it, you continue the conversation directly.",
+        successBody: "FishWithLocals will forward the inquiry to the captain. Once the captain takes over the conversation, you continue directly.",
         reference: "Inquiry reference",
         error: "The inquiry could not be sent right now. Please try again in a moment.",
         back: "Back to captains",
@@ -125,7 +126,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
           <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <label className="grid gap-2 text-sm font-medium">
               {copy.date}
-              <input className={inputClass} name="date" type="date" required />
+              <input className={inputClass} min={minDate} name="date" type="date" required />
             </label>
             <label className="grid gap-2 text-sm font-medium">
               {copy.time}
