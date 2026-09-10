@@ -12,7 +12,9 @@ type CaptainCardProps = {
 };
 
 export function CaptainCard({ captain, locale, verifiedLabel }: CaptainCardProps) {
-  const name = localise(captain.name, locale);
+  const sourceName = localise(captain.name, locale);
+  const isBacko = sourceName === "Captain #2" || sourceName === "Kapetan #2";
+  const name = isBacko ? "Baćko — Petar Radulović" : sourceName;
   const inquiryLabel = locale === "cg" ? "Pošalji upit kapetanu" : "Send an inquiry to the captain";
   const inquiryHref = `/inquiry?captain=${encodeURIComponent(name)}${locale === "cg" ? "&lang=cg" : ""}`;
 
@@ -22,6 +24,13 @@ export function CaptainCard({ captain, locale, verifiedLabel }: CaptainCardProps
         <div className="flex aspect-[4/5] min-h-80 items-center justify-center border border-ink/12 bg-wash/45 px-6 text-center">
           <h3 className="font-serif text-3xl tracking-tight text-ink/68">{name}</h3>
         </div>
+        {isBacko ? (
+          <div className="pt-5">
+            <Link className="text-link focus-ring inline-flex items-center gap-2" href={inquiryHref}>
+              {inquiryLabel} <ArrowIcon className="size-5" />
+            </Link>
+          </div>
+        ) : null}
       </article>
     );
   }
