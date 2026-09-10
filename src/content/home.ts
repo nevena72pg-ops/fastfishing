@@ -250,9 +250,21 @@ export const captains: Captain[] = [
   },
   {
     name: { en: "Captain #2", cg: "Kapetan #2" },
+    introduction: {
+      en: "A Bar captain whose fishing days are shaped by local waters, practical experience and time spent at sea.",
+      cg: "Barski kapetan čiji ribolovni dani počivaju na poznavanju lokalnog mora, praktičnom iskustvu i vremenu provedenom na vodi.",
+    },
     imageLabel: {
-      en: "Neutral captain placeholder",
-      cg: "Neutralno mjesto za kapetana",
+      en: "Baćko — Petar Radulović with a tuna catch",
+      cg: "Baćko — Petar Radulović sa ulovom tune",
+    },
+    image: {
+      src: "/images/home/captain-backo-tuna.webp",
+      alt: {
+        en: "Baćko — Petar Radulović on a fishing boat beside a large tuna catch.",
+        cg: "Baćko — Petar Radulović na ribarskom brodu pored velike tune.",
+      },
+      objectPosition: "50% 42%",
     },
     tone: "sea",
   },
