@@ -12,12 +12,9 @@ type CaptainCardProps = {
 };
 
 export function CaptainCard({ captain, locale, verifiedLabel }: CaptainCardProps) {
-  const sourceName = localise(captain.name, locale);
-  const isBacko = sourceName === "Captain #2" || sourceName === "Kapetan #2";
-  const isFuturePlaceholder = sourceName === "Captain #3" || sourceName === "Kapetan #3";
-  const name = isBacko ? "Baćko — Petar Radulović" : sourceName;
+  const name = localise(captain.name, locale);
+  const isFuturePlaceholder = name === "Captain #3" || name === "Kapetan #3";
   const inquiryLabel = locale === "cg" ? "Pošalji upit kapetanu" : "Send an inquiry to the captain";
-  const pilotLabel = locale === "cg" ? "FishWithLocals pilot kapetan" : "FishWithLocals pilot captain";
   const inquiryHref = `/inquiry?captain=${encodeURIComponent(name)}${locale === "cg" ? "&lang=cg" : ""}`;
 
   if (isFuturePlaceholder) {
@@ -27,9 +24,8 @@ export function CaptainCard({ captain, locale, verifiedLabel }: CaptainCardProps
   if (!captain.image || !captain.introduction) {
     return (
       <article className="group border-t border-ink/18 pt-4">
-        <div className="flex aspect-[4/5] min-h-80 flex-col items-center justify-center border border-ink/12 bg-wash/45 px-8 text-center">
-          <p className="eyebrow text-ink/48">{pilotLabel}</p>
-          <h3 className="mt-4 max-w-[13ch] font-serif text-4xl leading-tight tracking-tight text-ink/78">{name}</h3>
+        <div className="flex aspect-[4/5] min-h-80 items-center justify-center border border-ink/12 bg-wash/45 px-8 text-center">
+          <h3 className="max-w-[13ch] font-serif text-4xl leading-tight tracking-tight text-ink/78">{name}</h3>
         </div>
         <div className="pt-5">
           <Link className="text-link focus-ring inline-flex items-center gap-2" href={inquiryHref}>
