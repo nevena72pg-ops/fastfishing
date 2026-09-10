@@ -20,6 +20,36 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+async function findCaptainId(displayName: string) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return null;
+  }
+
+  const params = new URLSearchParams({
+    select: "id",
+    display_name: `eq.${displayName}`,
+    active: "eq.true",
+    limit: "1",
+  });
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/captains?${params.toString()}`, {
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    console.error("Failed to resolve captain", response.status, detail);
+    return null;
+  }
+
+  const rows = (await response.json()) as Array<{ id: string }>;
+  return rows[0]?.id ?? null;
+}
+
 export async function POST(request: Request) {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json(
@@ -63,10 +93,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid contact method." }, { status: 400 });
   }
 
+  const captainName = String(body.captain).trim();
+  const captainId = await findCaptainId(captainName);
   const reference = makeReference();
   const payload = {
     reference,
-    captain_name: String(body.captain).trim(),
+    captain_id: captainId,
+    captain_name: captainName,
     preferred_date: String(body.date),
     preferred_time: String(body.time),
     planned_duration: String(body.duration).trim(),
