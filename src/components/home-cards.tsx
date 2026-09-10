@@ -66,7 +66,7 @@ type StoryCardProps = {
   story: Story;
 };
 
-export function StoryCard({ actionLabel, story, featured = false, locale }: StoryCardProps) {
+export function StoryCard({ story, featured = false, locale }: StoryCardProps) {
   return (
     <article className={featured ? "group md:grid md:grid-cols-[1.2fr_0.8fr] md:items-end md:gap-8" : "group"}>
       <PhotoPlaceholder
@@ -83,9 +83,6 @@ export function StoryCard({ actionLabel, story, featured = false, locale }: Stor
       <div className={featured ? "pt-5 md:pb-2 md:pt-0" : "pt-5"}>
         <h3 className={featured ? "font-serif text-4xl leading-tight tracking-tight md:text-5xl" : "font-serif text-3xl leading-tight tracking-tight"}>{localise(story.title, locale)}</h3>
         <p className="mt-4 max-w-xl leading-7 text-ink/72">{localise(story.excerpt, locale)}</p>
-        <Link className="text-link focus-ring mt-5 inline-flex items-center gap-2" href="#stories">
-          {actionLabel} <ArrowIcon className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
       </div>
     </article>
   );
@@ -97,9 +94,8 @@ type DestinationCardProps = {
   locale: Locale;
 };
 
-export function DestinationCard({ actionLabel, destination, locale }: DestinationCardProps) {
+export function DestinationCard({ destination, locale }: DestinationCardProps) {
   const name = localise(destination.name, locale);
-  const actionName = destination.actionName ? localise(destination.actionName, locale) : name;
 
   return (
     <article className="group">
@@ -118,9 +114,6 @@ export function DestinationCard({ actionLabel, destination, locale }: Destinatio
         <h3 className="font-serif text-4xl tracking-tight">{name}</h3>
         <div>
           <p className="leading-7 text-ink/72">{localise(destination.description, locale)}</p>
-          <Link className="text-link focus-ring mt-5 inline-flex items-center gap-2" href={"#" + destination.slug}>
-            {actionLabel} {actionName} <ArrowIcon className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
         </div>
       </div>
     </article>
