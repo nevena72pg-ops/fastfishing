@@ -82,7 +82,6 @@ async function updateInquiry(args: {
     captain_responded_at: now,
     captain_response: args.rawResponse,
   };
-  if (args.status === "taken_over") payload.accepted_at = now;
   if (args.status === "unavailable") payload.unavailable_at = now;
 
   const response = await fetch(`${SUPABASE_URL}/rest/v1/inquiries?${query.toString()}`, {
@@ -119,21 +118,21 @@ export async function POST(request: Request) {
   const action = parseAction(body);
 
   if (!from || !reference || !action) {
-    return twiml("FishWithLocals: odgovori PREUZIMAM FWL-... ili NISAM DOSTUPAN FWL-...");
+    return twiml("FishWithLocals: odgovori PREUZIMAM FWL-... ako preuzimaš razgovor sa gostom ili NISAM DOSTUPAN FWL-... ako termin ne možeš.");
   }
 
   const captain = await findCaptainByPhone(from);
   if (!captain) {
-    return twiml("FishWithLocals: broj nije povezan sa aktivnim kapetanom.");
+    return twiml("FishWithLocals: ovaj broj nije povezan sa aktivnim profilom kapetana.");
   }
 
   const updated = await updateInquiry({ reference, captainId: captain.id, status: action, rawResponse: body });
   if (!updated) {
-    return twiml("FishWithLocals: nisam našao taj upit za ovog kapetana.");
+    return twiml("FishWithLocals: nijesam pronašao taj upit za tvoj profil. Provjeri referencu i pokušaj ponovo.");
   }
 
   if (action === "taken_over") {
-    return twiml(`FishWithLocals: ${reference} evidentiran kao PREUZIMAM.`);
+    return twiml(`FishWithLocals: ${reference} je evidentiran. Preuzimaš direktnu komunikaciju sa gostom; ovo još nije potvrđena rezervacija.`);
   }
-  return twiml(`FishWithLocals: ${reference} evidentiran kao NISAM DOSTUPAN.`);
+  return twiml(`FishWithLocals: ${reference} je evidentiran kao NISAM DOSTUPAN. FishWithLocals može gostu ponuditi drugu opciju.`);
 }
