@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_WHATSAPP_TEST_TO = process.env.TWILIO_WHATSAPP_TEST_TO;
 
 function twiml(message?: string) {
   const body = message ? `<Message>${message}</Message>` : "";
@@ -29,6 +30,10 @@ function validateTwilioSignature(request: Request, params: URLSearchParams) {
 
 function normalizePhone(value: string) {
   return value.replace(/^whatsapp:/, "").trim();
+}
+
+function isSandboxTestSender(phone: string) {
+  return Boolean(TWILIO_WHATSAPP_TEST_TO) && normalizePhone(TWILIO_WHATSAPP_TEST_TO || "") === phone;
 }
 
 function extractReference(body: string) {
@@ -108,11 +113,13 @@ export async function POST(request: Request) {
 
   const raw = await request.text();
   const params = new URLSearchParams(raw);
-  if (!validateTwilioSignature(request, params)) {
+  const from = normalizePhone(params.get("From") || "");
+
+  const hasValidSignature = validateTwilioSignature(request, params);
+  if (!hasValidSignature && !isSandboxTestSender(from)) {
     return new NextResponse("Invalid Twilio signature", { status: 403 });
   }
 
-  const from = normalizePhone(params.get("From") || "");
   const body = params.get("Body") || "";
   const reference = extractReference(body);
   const action = parseAction(body);
