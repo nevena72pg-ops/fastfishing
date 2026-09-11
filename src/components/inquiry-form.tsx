@@ -20,7 +20,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
     ? {
         eyebrow: "Upit kapetanu",
         heading: `Pošalji upit za ${captain}`,
-        intro: "Ovo nije trenutna rezervacija. Pošalji željeni termin i osnovne podatke, a kapetan potvrđuje dostupnost i detalje.",
+        intro: "Pošalji željeni termin i osnovne podatke. Kapetan će potvrditi dostupnost i javiti se za detalje.",
         captain: "Kapetan",
         date: "Željeni datum",
         time: "Vrijeme polaska",
@@ -46,7 +46,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
     : {
         eyebrow: "Captain inquiry",
         heading: `Send an inquiry for ${captain}`,
-        intro: "This is not an instant booking. Send your preferred time and basic details; the captain confirms availability and the day together with you.",
+        intro: "Send your preferred date, time and basic details. The captain will confirm availability and get in touch about the details.",
         captain: "Captain",
         date: "Preferred date",
         time: "Departure time",
