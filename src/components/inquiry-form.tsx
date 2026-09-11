@@ -9,6 +9,12 @@ type InquiryFormProps = {
   locale: Locale;
 };
 
+function cgInquiryHeading(captain: string) {
+  if (captain === "Feta") return "Pošalji upit Feti";
+  if (captain === "Baćko — Petar Radulović") return "Pošalji upit Baćku — Petru Raduloviću";
+  return `Pošalji upit kapetanu ${captain}`;
+}
+
 export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
@@ -19,7 +25,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const copy = locale === "cg"
     ? {
         eyebrow: "Upit kapetanu",
-        heading: `Pošalji upit za ${captain}`,
+        heading: cgInquiryHeading(captain),
         intro: "Pošalji željeni termin i osnovne podatke. Kapetan će potvrditi dostupnost i javiti se za detalje.",
         captain: "Kapetan",
         date: "Željeni datum",
@@ -45,7 +51,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
       }
     : {
         eyebrow: "Captain inquiry",
-        heading: `Send an inquiry for ${captain}`,
+        heading: `Send an inquiry to ${captain}`,
         intro: "Send your preferred date, time and basic details. The captain will confirm availability and get in touch about the details.",
         captain: "Captain",
         date: "Preferred date",
