@@ -106,7 +106,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid party size." }, { status: 400 });
   }
 
-  const allowedContacts = new Set(["WhatsApp", "Viber", "Phone", "Telefon"]);
+  const allowedContacts = new Set(["FWL", "WhatsApp", "Viber", "Phone", "Telefon"]);
   if (!allowedContacts.has(String(body.preferredContact))) {
     return NextResponse.json({ error: "Invalid contact method." }, { status: 400 });
   }
