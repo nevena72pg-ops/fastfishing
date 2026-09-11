@@ -13,10 +13,21 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale }: SiteHeaderProps) {
   const copy = homeCopy[locale];
-  const navItems: readonly (readonly [string, string])[] = [
-    ...copy.nav,
-    [locale === "cg" ? "Dnevnik mora" : "Sea Log", "#citizen-science"],
-  ];
+  const navItems: readonly (readonly [string, string])[] = locale === "cg"
+    ? [
+        ["Kapetani", "#captains"],
+        ["Priče", "#stories"],
+        ["Destinacije", "#destinations"],
+        ["More", "#sea"],
+        ["Dnevnik mora", "#citizen-science"],
+      ]
+    : [
+        ["Captains", "#captains"],
+        ["Stories", "#stories"],
+        ["Destinations", "#destinations"],
+        ["The Sea", "#sea"],
+        ["Sea Log", "#citizen-science"],
+      ];
 
   const sectionHref = (href: string) => {
     return locale === "cg" ? `/?lang=cg${href}` : `/${href}`;
