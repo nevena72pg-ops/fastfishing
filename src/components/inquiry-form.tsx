@@ -11,7 +11,7 @@ type InquiryFormProps = {
 
 function cgInquiryHeading(captain: string) {
   if (captain === "Feta") return "Pošalji upit Feti";
-  if (captain === "Baćko — Petar Radulović") return "Pošalji upit Baćku — Petru Raduloviću";
+  if (captain === "Baćko — Petar Radulović") return "Pošalji upit Baćku";
   return `Pošalji upit kapetanu ${captain}`;
 }
 
