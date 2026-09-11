@@ -51,10 +51,17 @@ export async function currentCaptainSession() {
   return parseSession(store.get(COOKIE_NAME)?.value);
 }
 
-export function captainServiceHeaders() {
+export function captainServiceHeaders(): Record<string, string> {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  return {
-    apikey: key,
-    Authorization: `Bearer ${key}`,
-  };
+  const headers: Record<string, string> = { apikey: key };
+
+  // Supabase's newer sb_secret_* keys are API keys, not JWTs. Sending them as
+  // Authorization: Bearer can make Storage try to parse them as a JWT and reject
+  // an otherwise valid server-side request. Legacy service_role JWT keys still
+  // need the bearer header for role propagation.
+  if (!key.startsWith("sb_secret_")) {
+    headers.Authorization = `Bearer ${key}`;
+  }
+
+  return headers;
 }
