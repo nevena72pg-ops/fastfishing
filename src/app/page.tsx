@@ -27,17 +27,36 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           {
             kicker: "Invazivna vrsta",
             title: "Riba lav",
-            body: "Sve češće se bilježi u Jadranu. Ne dodiruj bodlje golim rukama. Ako je vidiš ili uloviš, fotografija i lokacija mogu pomoći praćenju njenog širenja.",
+            body: "Riba lav se sve češće bilježi u Jadranu. Fotografija, lokacija i datum opažanja mogu pomoći u praćenju njenog širenja.",
+            warning: "Ne diraj bodlje golim rukama — otrov je u bodljama. Meso je jestivo; nakon bezbjednog uklanjanja bodlji i pravilnog čišćenja fileti se mogu pripremati na grilu, tiganju ili u rerni.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lionfish_%28Pterois_volitans%29.jpg/1280px-Lionfish_%28Pterois_volitans%29.jpg",
+            imageAlt: "Riba lav pod vodom, sa karakterističnim prugama i dugim bodljama.",
+            credit: "Foto: Brian Gratwicke · CC BY 2.0",
+            creditHref: "https://commons.wikimedia.org/wiki/File:Lionfish_(Pterois_volitans).jpg",
+            action: null,
+            href: null,
           },
           {
             kicker: "Oprez pri dodiru",
             title: "Vatreni crv",
-            body: "Bradati vatreni crv širi se sjevernije kroz Mediteran i Jadran. Njegove čekinje mogu izazvati bolan ubod — posmatraj, fotografiši i ne diraj.",
+            body: "Bradati vatreni crv prisutan je u Mediteranu i Jadranu. Fotografija i lokacija opažanja pomažu da pratimo gdje se pojavljuje.",
+            warning: "Ne diraj ga. Bijele čekinje mogu lako ući u kožu i izazvati jak bol i iritaciju. Posmatraj, fotografiši i ostavi ga na miru.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Hermodice_carunculata_%28Bearded_Fireworm%29.jpg/960px-Hermodice_carunculata_%28Bearded_Fireworm%29.jpg",
+            imageAlt: "Bradati vatreni crv na morskom dnu, sa prepoznatljivim bijelim čekinjama.",
+            credit: "Foto: Nick Hobgood · CC BY-SA 3.0",
+            creditHref: "https://commons.wikimedia.org/wiki/File:Hermodice_carunculata_(Bearded_Fireworm).jpg",
+            action: null,
+            href: null,
           },
           {
             kicker: "Tvoj podatak vrijedi",
             title: "Prijavi opažanje",
             body: "Fotografija, lokacija, datum i kratka napomena mogu pretvoriti običan izlazak na more u koristan podatak za građansku nauku.",
+            warning: "Ako nisi siguran šta si vidio, ipak pošalji fotografiju. Opažanje možemo provjeriti prije nego što ga koristimo kao podatak.",
+            image: null,
+            imageAlt: null,
+            credit: null,
+            creditHref: null,
             action: "Prijavi opažanje",
             href: "/sea-log?lang=cg",
           },
@@ -51,17 +70,36 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           {
             kicker: "Invasive species",
             title: "Lionfish",
-            body: "Lionfish are being recorded more often in the Adriatic. Do not handle the spines with bare hands. If you see or catch one, a photograph and location can help track its spread.",
+            body: "Lionfish are being recorded more often in the Adriatic. A photograph, location and date can help track their spread.",
+            warning: "Do not handle the spines with bare hands — the venom is in the spines. The flesh is edible; once the spines are safely removed and the fish is properly cleaned, fillets can be grilled, pan-fried or baked.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lionfish_%28Pterois_volitans%29.jpg/1280px-Lionfish_%28Pterois_volitans%29.jpg",
+            imageAlt: "Lionfish underwater, showing its distinctive stripes and long spines.",
+            credit: "Photo: Brian Gratwicke · CC BY 2.0",
+            creditHref: "https://commons.wikimedia.org/wiki/File:Lionfish_(Pterois_volitans).jpg",
+            action: null,
+            href: null,
           },
           {
             kicker: "Handle with care",
             title: "Bearded fireworm",
-            body: "The bearded fireworm is expanding northward through the Mediterranean and Adriatic. Its bristles can cause a painful sting — observe, photograph and do not touch.",
+            body: "The bearded fireworm occurs across the Mediterranean and Adriatic. A photograph and location can help us track where it is appearing.",
+            warning: "Do not touch it. Its white bristles can penetrate skin and cause intense pain and irritation. Observe, photograph and leave it undisturbed.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Hermodice_carunculata_%28Bearded_Fireworm%29.jpg/960px-Hermodice_carunculata_%28Bearded_Fireworm%29.jpg",
+            imageAlt: "Bearded fireworm on the seabed, showing its distinctive white bristles.",
+            credit: "Photo: Nick Hobgood · CC BY-SA 3.0",
+            creditHref: "https://commons.wikimedia.org/wiki/File:Hermodice_carunculata_(Bearded_Fireworm).jpg",
+            action: null,
+            href: null,
           },
           {
             kicker: "Your observation matters",
             title: "Report a sighting",
             body: "A photograph, location, date and short note can turn an ordinary day at sea into a useful citizen-science record.",
+            warning: "Not sure what you saw? Send the photograph anyway. We can verify the observation before treating it as data.",
+            image: null,
+            imageAlt: null,
+            credit: null,
+            creditHref: null,
             action: "Report an observation",
             href: "/sea-log",
           },
@@ -237,15 +275,40 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           <div className="mt-14 grid gap-px overflow-hidden border border-ink/15 bg-ink/15 md:grid-cols-3">
             {citizenScience.cards.map((card) => (
-              <article className="flex min-h-full flex-col bg-canvas p-7 sm:p-8" key={card.title}>
-                <p className="eyebrow text-rust">{card.kicker}</p>
-                <h3 className="mt-5 font-serif text-3xl leading-tight tracking-tight">{card.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-ink/68">{card.body}</p>
-                {card.action && card.href ? (
-                  <Link className="button-primary focus-ring mt-8 inline-flex self-start" href={card.href}>
-                    {card.action} <ArrowIcon className="size-5" />
-                  </Link>
+              <article className="flex min-h-full flex-col bg-canvas" key={card.title}>
+                {card.image ? (
+                  <div>
+                    <div
+                      aria-label={card.imageAlt ?? card.title}
+                      className="aspect-[4/3] bg-cover bg-center"
+                      role="img"
+                      style={{ backgroundImage: `url(${card.image})` }}
+                    />
+                    {card.credit && card.creditHref ? (
+                      <a
+                        className="block px-7 pt-2 text-[0.66rem] leading-5 text-ink/42 underline-offset-2 hover:underline sm:px-8"
+                        href={card.creditHref}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {card.credit}
+                      </a>
+                    ) : null}
+                  </div>
                 ) : null}
+                <div className="flex flex-1 flex-col p-7 sm:p-8">
+                  <p className="eyebrow text-rust">{card.kicker}</p>
+                  <h3 className="mt-5 font-serif text-3xl leading-tight tracking-tight">{card.title}</h3>
+                  <p className="mt-4 text-sm leading-7 text-ink/68">{card.body}</p>
+                  <div className="mt-6 border-l-2 border-rust/55 bg-rust/6 px-4 py-4">
+                    <p className="text-sm leading-6 text-ink/76">{card.warning}</p>
+                  </div>
+                  {card.action && card.href ? (
+                    <Link className="button-primary focus-ring mt-8 inline-flex self-start" href={card.href}>
+                      {card.action} <ArrowIcon className="size-5" />
+                    </Link>
+                  ) : null}
+                </div>
               </article>
             ))}
           </div>
