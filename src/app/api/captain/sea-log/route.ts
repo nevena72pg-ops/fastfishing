@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { captainServiceHeaders, currentCaptainSession } from "@/lib/captain-session";
+import { captainServiceHeaders, captainStorageHeaders, currentCaptainSession } from "@/lib/captain-session";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -59,7 +59,7 @@ async function uploadPhoto(captainId: string, photo: File) {
   const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
     method: "POST",
     headers: {
-      ...captainServiceHeaders(),
+      ...captainStorageHeaders(),
       "Content-Type": photo.type,
       "x-upsert": "false",
     },
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
     if (photoPath) {
       await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
         method: "DELETE",
-        headers: captainServiceHeaders(),
+        headers: captainStorageHeaders(),
         cache: "no-store",
       }).catch(() => undefined);
     }
