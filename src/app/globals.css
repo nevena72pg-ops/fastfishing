@@ -325,6 +325,35 @@ summary {
   text-transform: uppercase;
 }
 
+/* Citizen-science cards: visual species identification without touching Next image config. */
+#citizen-science article:nth-child(1)::before,
+#citizen-science article:nth-child(2)::before {
+  content: "";
+  display: block;
+  flex: 0 0 auto;
+  height: 15rem;
+  margin: -1.75rem -1.75rem 1.5rem;
+  border-bottom: 1px solid rgb(24 49 50 / 0.12);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#citizen-science article:nth-child(1)::before {
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Pterois_volitans_-_red_lionfish.jpg/1280px-Pterois_volitans_-_red_lionfish.jpg");
+}
+
+#citizen-science article:nth-child(2)::before {
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Bearded_fireworm_%28Hermodice_carunculata%29.jpg/1280px-Bearded_fireworm_%28Hermodice_carunculata%29.jpg");
+}
+
+@media (min-width: 640px) {
+  #citizen-science article:nth-child(1)::before,
+  #citizen-science article:nth-child(2)::before {
+    margin: -2rem -2rem 1.75rem;
+  }
+}
+
 @media (min-width: 768px) {
   .section-intro {
     grid-template-columns: minmax(0, 0.85fr) minmax(20rem, 1.15fr);
