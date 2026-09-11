@@ -51,16 +51,20 @@ export async function currentCaptainSession() {
   return parseSession(store.get(COOKIE_NAME)?.value);
 }
 
-export function captainServiceHeaders(): Record<string, string> {
-  // Prefer the legacy JWT service_role key for server-to-server Storage calls.
-  // Keep SUPABASE_SERVICE_ROLE_KEY as a fallback so existing deployments continue
-  // to work for PostgREST while the dedicated legacy key is being configured.
-  const key = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+function headersForKey(key: string): Record<string, string> {
   const headers: Record<string, string> = { apikey: key };
-
   if (!key.startsWith("sb_secret_")) {
     headers.Authorization = `Bearer ${key}`;
   }
-
   return headers;
+}
+
+export function captainServiceHeaders(): Record<string, string> {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  return headersForKey(key);
+}
+
+export function captainStorageHeaders(): Record<string, string> {
+  const key = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  return headersForKey(key);
 }
