@@ -33,10 +33,11 @@ function normalizeObservedAt(value: FormDataEntryValue | null) {
   return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
 }
 
-function safeStorageDetail(detail: string) {
+function safeDetail(detail: string) {
   return detail
     .replace(/sb_(?:secret|publishable)_[A-Za-z0-9_-]+/g, "[redacted]")
     .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, "Bearer [redacted]")
+    .replace(/eyJ[A-Za-z0-9._-]+/g, "[redacted-jwt]")
     .slice(0, 320);
 }
 
@@ -70,8 +71,8 @@ async function uploadPhoto(captainId: string, photo: File) {
   if (!response.ok) {
     const detail = await response.text();
     console.error("Sea Log photo upload failed", response.status, detail);
-    const safeDetail = safeStorageDetail(detail) || response.statusText || "bez detalja";
-    throw new Error(`Foto upload greška ${response.status}: ${safeDetail}`);
+    const safe = safeDetail(detail) || response.statusText || "bez detalja";
+    throw new Error(`Foto upload greška ${response.status}: ${safe}`);
   }
 
   return path;
@@ -160,8 +161,9 @@ export async function POST(request: Request) {
       }).catch(() => undefined);
     }
 
+    const safe = safeDetail(detail) || response.statusText || "bez detalja";
     return NextResponse.json(
-      { error: "Sea Log baza još nije aktivirana ili unos nije mogao biti sačuvan." },
+      { error: `Sea Log upis greška ${response.status}: ${safe}` },
       { status: 503 },
     );
   }
