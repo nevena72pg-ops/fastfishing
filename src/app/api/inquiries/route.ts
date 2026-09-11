@@ -90,7 +90,9 @@ function buildCaptainMessage(args: {
     lines.push(`Napomena: ${args.note}`);
   }
 
-  lines.push("Odgovori PREUZIMAM kada preuzmeš komunikaciju sa gostom.");
+  lines.push(
+    `Odgovori PREUZIMAM ${args.reference} ako preuzimaš direktnu komunikaciju sa gostom, ili NISAM DOSTUPAN ${args.reference} ako nijesi dostupan za traženi termin.`,
+  );
   return lines.join("\n");
 }
 
