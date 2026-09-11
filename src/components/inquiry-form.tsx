@@ -18,6 +18,7 @@ function cgInquiryHeading(captain: string) {
 export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const [conversationUrl, setConversationUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
@@ -26,7 +27,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
     ? {
         eyebrow: "Upit kapetanu",
         heading: cgInquiryHeading(captain),
-        intro: "Pošalji željeni termin i osnovne podatke. Kapetan će potvrditi dostupnost i javiti se za detalje.",
+        intro: "Pošalji željeni termin i osnovne podatke. Kapetan će vidjeti upit u FWL Captain aplikaciji i javiti se kroz FishWithLocals.",
         captain: "Kapetan",
         date: "Željeni datum",
         time: "Vrijeme polaska",
@@ -35,24 +36,25 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         experience: "Vrsta iskustva",
         name: "Ime i prezime",
         phone: "Broj telefona",
-        preferredContact: "Kako želiš da te kapetan kontaktira?",
+        phoneHint: "Telefon čuvamo kao rezervni kontakt za pilot.",
         note: "Napomena",
         choose: "Izaberi",
         experiences: ["Ribolov", "Porodični izlazak", "Početnici / učenje", "Izlazak na more", "Drugo"],
         durations: ["2 sata", "3 sata", "4 sata", "6 sati", "Cijeli dan"],
-        contactMethods: ["WhatsApp", "Viber", "Telefon"],
         send: "Pošalji upit",
         sending: "Šaljem upit…",
         successTitle: "Upit je primljen.",
-        successBody: "FishWithLocals će proslijediti upit kapetanu. Kada ga kapetan preuzme, dalje komunicirate direktno.",
+        successBody: "Upit je stigao u FWL Captain. Razgovor sa kapetanom nastavljaš ovdje, bez WhatsAppa i Vibera.",
+        fallbackBody: "Upit je primljen. Privatni FWL razgovor biće dostupan čim završimo aktiviranje pilot baze poruka.",
         reference: "Broj upita",
+        openConversation: "Otvori razgovor",
         error: "Upit trenutno nije mogao biti poslat. Pokušaj ponovo za nekoliko trenutaka.",
         back: "Nazad na kapetane",
       }
     : {
         eyebrow: "Captain inquiry",
         heading: `Send an inquiry to ${captain}`,
-        intro: "Send your preferred date, time and basic details. The captain will confirm availability and get in touch about the details.",
+        intro: "Send your preferred date, time and basic details. The captain will see the inquiry in FWL Captain and reply through FishWithLocals.",
         captain: "Captain",
         date: "Preferred date",
         time: "Departure time",
@@ -61,17 +63,18 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         experience: "Type of experience",
         name: "Full name",
         phone: "Phone number",
-        preferredContact: "How would you like the captain to contact you?",
+        phoneHint: "We keep your phone number as a backup contact during the pilot.",
         note: "Note",
         choose: "Choose",
         experiences: ["Fishing", "Family outing", "Beginners / learning", "Time at sea", "Other"],
         durations: ["2 hours", "3 hours", "4 hours", "6 hours", "Full day"],
-        contactMethods: ["WhatsApp", "Viber", "Phone"],
         send: "Send inquiry",
         sending: "Sending inquiry…",
         successTitle: "Inquiry received.",
-        successBody: "FishWithLocals will forward the inquiry to the captain. Once the captain takes over the conversation, you continue directly.",
+        successBody: "Your inquiry is in FWL Captain. Continue the conversation with the captain here, without WhatsApp or Viber.",
+        fallbackBody: "Your inquiry was received. The private FWL conversation will be available as soon as the pilot message database is activated.",
         reference: "Inquiry reference",
+        openConversation: "Open conversation",
         error: "The inquiry could not be sent right now. Please try again in a moment.",
         back: "Back to captains",
       };
@@ -92,12 +95,11 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
+      if (!response.ok) throw new Error("Submission failed");
 
-      const result = await response.json() as { reference?: string };
+      const result = await response.json() as { reference?: string; conversationUrl?: string | null };
       setReference(result.reference ?? null);
+      setConversationUrl(result.conversationUrl ?? null);
       setSubmitted(true);
       form.reset();
     } catch {
@@ -118,12 +120,18 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
       {submitted ? (
         <section className="mt-8 border border-ink/15 bg-wash p-6 sm:p-7 md:p-9" aria-live="polite">
           <h2 className="font-serif text-3xl">{copy.successTitle}</h2>
-          <p className="mt-4 leading-7 text-ink/70">{copy.successBody}</p>
+          <p className="mt-4 leading-7 text-ink/70">{conversationUrl ? copy.successBody : copy.fallbackBody}</p>
           {reference ? <p className="mt-4 text-sm font-medium text-ink/75">{copy.reference}: {reference}</p> : null}
-          <Link className="button-primary focus-ring mt-7 inline-flex w-full justify-center sm:w-auto" href={locale === "cg" ? "/?lang=cg#captains" : "/#captains"}>{copy.back}</Link>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            {conversationUrl ? (
+              <Link className="button-primary focus-ring inline-flex w-full justify-center sm:w-auto" href={conversationUrl}>{copy.openConversation}</Link>
+            ) : null}
+            <Link className={`${conversationUrl ? "focus-ring border border-ink/25 px-4 py-3 text-center text-sm font-semibold" : "button-primary focus-ring inline-flex"} w-full justify-center sm:w-auto`} href={locale === "cg" ? "/?lang=cg#captains" : "/#captains"}>{copy.back}</Link>
+          </div>
         </section>
       ) : (
         <form className="mt-8 grid gap-5 border-t border-ink/15 pt-7 sm:gap-6 sm:pt-8" onSubmit={handleSubmit}>
+          <input name="preferredContact" type="hidden" value="FWL" />
           <label className="grid gap-2 text-sm font-medium">
             {copy.captain}
             <input className={`${inputClass} bg-wash`} name="captain" value={captain} readOnly />
@@ -170,14 +178,7 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
           <label className="grid gap-2 text-sm font-medium">
             {copy.phone}
             <input className={inputClass} name="phone" type="tel" autoComplete="tel" inputMode="tel" required />
-          </label>
-
-          <label className="grid gap-2 text-sm font-medium">
-            {copy.preferredContact}
-            <select className={inputClass} name="preferredContact" defaultValue="" required>
-              <option value="" disabled>{copy.choose}</option>
-              {copy.contactMethods.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
+            <span className="text-xs font-normal leading-5 text-ink/55">{copy.phoneHint}</span>
           </label>
 
           <label className="grid gap-2 text-sm font-medium">
