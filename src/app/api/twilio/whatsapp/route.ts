@@ -3,15 +3,13 @@ import { NextResponse } from "next/server";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
 const TWILIO_WHATSAPP_TEST_TO = process.env.TWILIO_WHATSAPP_TEST_TO;
 
-function twiml(message?: string) {
-  const body = message ? `<Message>${message}</Message>` : "";
-  return new NextResponse(`<?xml version="1.0" encoding="UTF-8"?><Response>${body}</Response>`, {
-    status: 200,
-    headers: { "Content-Type": "text/xml; charset=utf-8" },
-  });
+function emptyResponse(status = 204) {
+  return new NextResponse(null, { status });
 }
 
 function validateTwilioSignature(request: Request, params: URLSearchParams) {
@@ -47,6 +45,36 @@ function parseAction(body: string) {
     return "unavailable" as const;
   }
   return null;
+}
+
+async function sendWhatsAppReply(to: string, body: string) {
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM) return false;
+
+  const form = new URLSearchParams({
+    To: to.startsWith("whatsapp:") ? to : `whatsapp:${to}`,
+    From: TWILIO_WHATSAPP_FROM,
+    Body: body,
+  });
+
+  const response = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64")}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    const detail = await response.text();
+    console.error("Failed to send inbound WhatsApp reply", response.status, detail);
+    return false;
+  }
+  return true;
 }
 
 async function findCaptainByPhone(phone: string) {
@@ -107,7 +135,7 @@ async function updateInquiry(args: {
 }
 
 export async function POST(request: Request) {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !TWILIO_AUTH_TOKEN) {
+  if (!TWILIO_AUTH_TOKEN) {
     return new NextResponse("Not configured", { status: 503 });
   }
 
@@ -120,26 +148,48 @@ export async function POST(request: Request) {
     return new NextResponse("Invalid Twilio signature", { status: 403 });
   }
 
+  if (!from) return emptyResponse();
+
   const body = params.get("Body") || "";
   const reference = extractReference(body);
   const action = parseAction(body);
 
-  if (!from || !reference || !action) {
-    return twiml("FishWithLocals: odgovori PREUZIMAM FWL-... ako preuzimaš razgovor sa gostom ili NISAM DOSTUPAN FWL-... ako termin ne možeš.");
+  if (!reference || !action) {
+    await sendWhatsAppReply(
+      from,
+      "FishWithLocals: odgovori PREUZIMAM FWL-... ako preuzimaš razgovor sa gostom ili NISAM DOSTUPAN FWL-... ako termin ne možeš.",
+    );
+    return emptyResponse();
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    await sendWhatsAppReply(from, "FishWithLocals: sistem trenutno nije dostupan. Pokušaj ponovo malo kasnije.");
+    return emptyResponse();
   }
 
   const captain = await findCaptainByPhone(from);
   if (!captain) {
-    return twiml("FishWithLocals: ovaj broj nije povezan sa aktivnim profilom kapetana.");
+    await sendWhatsAppReply(from, "FishWithLocals: ovaj broj nije povezan sa aktivnim profilom kapetana.");
+    return emptyResponse();
   }
 
   const updated = await updateInquiry({ reference, captainId: captain.id, status: action, rawResponse: body });
   if (!updated) {
-    return twiml("FishWithLocals: nijesam pronašao taj upit za tvoj profil. Provjeri referencu i pokušaj ponovo.");
+    await sendWhatsAppReply(from, "FishWithLocals: nijesam pronašao taj upit za tvoj profil. Provjeri referencu i pokušaj ponovo.");
+    return emptyResponse();
   }
 
   if (action === "taken_over") {
-    return twiml(`FishWithLocals: ${reference} je evidentiran. Preuzimaš direktnu komunikaciju sa gostom; ovo još nije potvrđena rezervacija.`);
+    await sendWhatsAppReply(
+      from,
+      `FishWithLocals: ${reference} je evidentiran. Preuzimaš direktnu komunikaciju sa gostom; ovo još nije potvrđena rezervacija.`,
+    );
+  } else {
+    await sendWhatsAppReply(
+      from,
+      `FishWithLocals: ${reference} je evidentiran kao NISAM DOSTUPAN. FishWithLocals može gostu ponuditi drugu opciju.`,
+    );
   }
-  return twiml(`FishWithLocals: ${reference} je evidentiran kao NISAM DOSTUPAN. FishWithLocals može gostu ponuditi drugu opciju.`);
+
+  return emptyResponse();
 }
