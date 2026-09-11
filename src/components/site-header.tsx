@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import type { MouseEvent } from "react";
 import { homeCopy } from "@/content/home";
 import { locales, type Locale } from "@/content/i18n";
 
@@ -10,11 +13,12 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale }: SiteHeaderProps) {
   const copy = homeCopy[locale];
-  const sectionHref = (href: string) => {
-    if (languageBasePath === "/") {
-      return href;
-    }
+  const navItems: readonly (readonly [string, string])[] = [
+    ...copy.nav,
+    [locale === "cg" ? "Dnevnik mora" : "Sea Log", "#citizen-science"],
+  ];
 
+  const sectionHref = (href: string) => {
     return locale === "cg" ? `/?lang=cg${href}` : `/${href}`;
   };
 
@@ -31,24 +35,28 @@ export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale
     return query ? `${languageBasePath}?${query}` : languageBasePath;
   };
 
+  const closeMobileMenu = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.currentTarget.closest("details")?.removeAttribute("open");
+  };
+
   return (
-    <header className="border-b border-ink/10 bg-canvas">
-      <div className="page-shell flex min-h-20 items-center justify-between gap-6 py-4">
-        <Link className="font-serif text-[1.35rem] tracking-[-0.025em] text-ink focus-ring" href={copy.logoHref}>
+    <header className="sticky top-0 z-50 border-b border-ink/10 bg-canvas/95 backdrop-blur-md">
+      <div className="page-shell flex min-h-[4.5rem] items-center justify-between gap-4 py-3">
+        <Link className="font-serif text-[1.3rem] tracking-[-0.025em] text-ink focus-ring" href={copy.logoHref}>
           FishWithLocals
         </Link>
 
-        <nav aria-label={copy.navLabel} className="hidden md:block">
-          <ul className="flex items-center gap-8 text-sm text-ink/78">
-            {copy.nav.map(([label, href]) => (
+        <nav aria-label={copy.navLabel} className="hidden lg:block">
+          <ul className="flex items-center gap-6 text-sm text-ink/78">
+            {navItems.map(([label, href]) => (
               <li key={href}>
-                <Link className="nav-link focus-ring" href={sectionHref(href)}>{label}</Link>
+                <Link className="nav-link focus-ring whitespace-nowrap" href={sectionHref(href)}>{label}</Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="language-switcher hidden md:flex" aria-label={copy.languageSwitcherLabel}>
+        <div className="language-switcher hidden lg:flex" aria-label={copy.languageSwitcherLabel}>
           {(Object.keys(locales) as Locale[]).map((language) => (
             <Link
               aria-current={language === locale ? "page" : undefined}
@@ -63,15 +71,37 @@ export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale
           ))}
         </div>
 
-        <details className="mobile-nav relative md:hidden">
-          <summary className="focus-ring cursor-pointer list-none border-b border-ink/40 px-1 py-2 text-sm">{copy.menu}</summary>
-          <nav aria-label={copy.mobileNavLabel} className="absolute right-0 top-12 z-30 w-56 border border-ink/10 bg-canvas p-5 shadow-[0_18px_50px_rgba(24,42,42,0.12)]">
-            <ul className="space-y-4 text-base">
-              {copy.nav.map(([label, href]) => (
-                <li key={href}><Link className="block focus-ring" href={sectionHref(href)}>{label}</Link></li>
+        <details className="mobile-nav group relative lg:hidden">
+          <summary className="focus-ring inline-flex min-h-11 cursor-pointer list-none items-center gap-2 border border-ink/15 px-3 py-2 text-sm font-semibold text-ink">
+            <span className="flex w-4 flex-col gap-1.5 group-open:hidden" aria-hidden="true">
+              <span className="h-px w-4 bg-ink" />
+              <span className="h-px w-4 bg-ink" />
+            </span>
+            <span className="hidden text-xl font-normal leading-none group-open:inline" aria-hidden="true">×</span>
+            {copy.menu}
+          </summary>
+
+          <nav
+            aria-label={copy.mobileNavLabel}
+            className="fixed inset-x-4 top-[5rem] z-50 max-h-[calc(100dvh-6rem)] overflow-y-auto border border-ink/12 bg-canvas p-5 shadow-[0_22px_70px_rgba(24,42,42,0.18)] sm:left-auto sm:right-6 sm:w-[22rem]"
+          >
+            <ul className="divide-y divide-ink/10 border-y border-ink/10">
+              {navItems.map(([label, href]) => (
+                <li key={href}>
+                  <Link
+                    className="focus-ring flex min-h-14 items-center justify-between py-3 text-base font-medium text-ink"
+                    href={sectionHref(href)}
+                    onClick={closeMobileMenu}
+                  >
+                    <span>{label}</span>
+                    <span aria-hidden="true" className="text-ink/40">→</span>
+                  </Link>
+                </li>
               ))}
             </ul>
-            <div className="mt-5 border-t border-ink/10 pt-4">
+
+            <div className="mt-5">
+              <p className="eyebrow mb-3 text-ink/45">{copy.languageSwitcherLabel}</p>
               <div className="language-switcher inline-flex" aria-label={copy.languageSwitcherLabel}>
                 {(Object.keys(locales) as Locale[]).map((language) => (
                   <Link
@@ -81,6 +111,7 @@ export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale
                     href={languageHref(language)}
                     key={language}
                     hrefLang={language === "cg" ? "cnr-Latn-ME" : "en"}
+                    onClick={closeMobileMenu}
                   >
                     <span aria-hidden="true">{locales[language].flag}</span> {locales[language].label}
                   </Link>
