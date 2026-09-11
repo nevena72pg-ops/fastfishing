@@ -52,13 +52,12 @@ export async function currentCaptainSession() {
 }
 
 export function captainServiceHeaders(): Record<string, string> {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  // Prefer the legacy JWT service_role key for server-to-server Storage calls.
+  // Keep SUPABASE_SERVICE_ROLE_KEY as a fallback so existing deployments continue
+  // to work for PostgREST while the dedicated legacy key is being configured.
+  const key = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
   const headers: Record<string, string> = { apikey: key };
 
-  // Supabase's newer sb_secret_* keys are API keys, not JWTs. Sending them as
-  // Authorization: Bearer can make Storage try to parse them as a JWT and reject
-  // an otherwise valid server-side request. Legacy service_role JWT keys still
-  // need the bearer header for role propagation.
   if (!key.startsWith("sb_secret_")) {
     headers.Authorization = `Bearer ${key}`;
   }
