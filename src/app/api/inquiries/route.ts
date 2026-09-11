@@ -57,6 +57,20 @@ async function findCaptain(displayName: string): Promise<CaptainRecord | null> {
   return rows[0] ?? null;
 }
 
+async function insertInquiry(payload: Record<string, unknown>) {
+  return fetch(`${SUPABASE_URL}/rest/v1/inquiries`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY!,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+}
+
 export async function POST(request: Request) {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json({ error: "Inquiry storage is not configured yet." }, { status: 503 });
@@ -103,7 +117,7 @@ export async function POST(request: Request) {
   const guestToken = randomBytes(24).toString("base64url");
   const note = isNonEmptyString(body.note) ? body.note.trim() : null;
 
-  const payload = {
+  const basePayload = {
     reference,
     captain_id: captain?.id ?? null,
     captain_name: captainName,
@@ -116,32 +130,40 @@ export async function POST(request: Request) {
     guest_phone: String(body.phone).trim(),
     preferred_contact: String(body.preferredContact),
     note,
-    guest_access_token_hash: hashToken(guestToken),
   };
 
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/inquiries`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
+  let chatReady = true;
+  let response = await insertInquiry({
+    ...basePayload,
+    guest_access_token_hash: hashToken(guestToken),
   });
 
   if (!response.ok) {
     const detail = await response.text();
-    console.error("Failed to store inquiry", response.status, detail);
-    return NextResponse.json({ error: "Could not save inquiry." }, { status: 500 });
+    const migrationMissing = detail.includes("guest_access_token_hash") || detail.includes("schema cache");
+
+    if (!migrationMissing) {
+      console.error("Failed to store inquiry", response.status, detail);
+      return NextResponse.json({ error: "Could not save inquiry." }, { status: 500 });
+    }
+
+    chatReady = false;
+    response = await insertInquiry(basePayload);
+    if (!response.ok) {
+      const fallbackDetail = await response.text();
+      console.error("Failed to store inquiry", response.status, fallbackDetail);
+      return NextResponse.json({ error: "Could not save inquiry." }, { status: 500 });
+    }
   }
 
   return NextResponse.json(
     {
       reference,
       delivery: "captain-portal",
-      conversationUrl: `/conversation/${encodeURIComponent(reference)}?token=${encodeURIComponent(guestToken)}`,
+      conversationReady: chatReady,
+      conversationUrl: chatReady
+        ? `/conversation/${encodeURIComponent(reference)}?token=${encodeURIComponent(guestToken)}`
+        : null,
     },
     { status: 201 },
   );
