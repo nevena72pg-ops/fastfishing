@@ -100,6 +100,20 @@ function formatCreated(value: string) {
 }
 
 export default async function AdminPage() {
+  if (process.env.ENABLE_FWL_ADMIN !== "true") {
+    return (
+      <main className="min-h-screen bg-canvas px-5 py-10 text-ink sm:px-8">
+        <div className="mx-auto max-w-xl">
+          <p className="eyebrow">FishWithLocals</p>
+          <h1 className="mt-4 font-serif text-5xl">Admin je zatvoren</h1>
+          <p className="mt-5 text-base leading-7 text-ink/70">
+            Stari nezaštićeni admin inbox je isključen. Operativni rad sa upitima prelazi na privatni FWL Captain portal.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   const inquiries = await loadInquiries();
 
   return (
