@@ -33,6 +33,13 @@ function normalizeObservedAt(value: FormDataEntryValue | null) {
   return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
 }
 
+function safeStorageDetail(detail: string) {
+  return detail
+    .replace(/sb_(?:secret|publishable)_[A-Za-z0-9_-]+/g, "[redacted]")
+    .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, "Bearer [redacted]")
+    .slice(0, 320);
+}
+
 async function uploadPhoto(captainId: string, photo: File) {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
 
@@ -63,7 +70,8 @@ async function uploadPhoto(captainId: string, photo: File) {
   if (!response.ok) {
     const detail = await response.text();
     console.error("Sea Log photo upload failed", response.status, detail);
-    throw new Error("Fotografija trenutno ne može da se sačuva. Sea Log storage možda još nije aktiviran.");
+    const safeDetail = safeStorageDetail(detail) || response.statusText || "bez detalja";
+    throw new Error(`Foto upload greška ${response.status}: ${safeDetail}`);
   }
 
   return path;
