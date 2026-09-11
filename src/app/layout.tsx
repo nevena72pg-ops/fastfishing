@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FishWithLocals — Meet the people who know the sea",
+  title: "FishWithLocals — Meet the captains who know the sea",
   description: "Meet personally verified local fishing captains in Bar and Budva, Montenegro.",
 };
 
