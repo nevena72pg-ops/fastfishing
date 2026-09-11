@@ -273,7 +273,7 @@ export default async function CaptainPage({ searchParams }: { searchParams: Prom
         <div className="mx-auto grid max-w-4xl grid-cols-4 gap-2 text-center text-xs font-semibold">
           <Link className={`px-2 py-3 ${view === "inquiries" ? "bg-ink text-canvas" : "text-ink/70"}`} href="/captain">Upiti</Link>
           <Link className={`px-2 py-3 ${view === "messages" ? "bg-ink text-canvas" : "text-ink/70"}`} href="/captain?view=messages">Poruke</Link>
-          <span className="px-2 py-3 text-ink/35">Sea Log</span>
+          <Link className="px-2 py-3 text-ink/70" href="/captain/sea-log">Sea Log</Link>
           <span className="px-2 py-3 text-ink/35">Profil</span>
         </div>
       </nav>
