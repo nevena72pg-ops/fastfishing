@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowIcon, VerifiedIcon } from "@/components/icons";
+import { ArrowIcon } from "@/components/icons";
 import { CaptainCard, DestinationCard, StoryCard } from "@/components/home-cards";
 import { PhotoPlaceholder } from "@/components/photo-placeholder";
 import { SiteFooter } from "@/components/site-footer";
@@ -18,6 +18,55 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const locale = resolveLocale(params?.lang);
   const copy = getHomeCopy(locale);
   const htmlLang = locales[locale].htmlLang;
+  const citizenScience = locale === "cg"
+    ? {
+        eyebrow: "Građanska nauka · Dnevnik mora",
+        heading: "More se mijenja. Pomozi nam da to primijetimo.",
+        body: "Naši kapetani i gosti vide ono što se sa obale često ne vidi — nove vrste, otpad, napuštenu opremu i životinje u nevolji. Svako pouzdano opažanje može biti korisno.",
+        cards: [
+          {
+            kicker: "Invazivna vrsta",
+            title: "Riba lav",
+            body: "Sve češće se bilježi u Jadranu. Ne dodiruj bodlje golim rukama. Ako je vidiš ili uloviš, fotografija i lokacija mogu pomoći praćenju njenog širenja.",
+          },
+          {
+            kicker: "Oprez pri dodiru",
+            title: "Vatreni crv",
+            body: "Bradati vatreni crv širi se sjevernije kroz Mediteran i Jadran. Njegove čekinje mogu izazvati bolan ubod — posmatraj, fotografiši i ne diraj.",
+          },
+          {
+            kicker: "Tvoj podatak vrijedi",
+            title: "Prijavi opažanje",
+            body: "Fotografija, lokacija, datum i kratka napomena mogu pretvoriti običan izlazak na more u koristan podatak za građansku nauku.",
+            action: "Prijavi opažanje",
+            href: "/sea-log?lang=cg",
+          },
+        ],
+      }
+    : {
+        eyebrow: "Citizen science · Sea Log",
+        heading: "The sea is changing. Help us notice it.",
+        body: "Our captains and guests see what is often invisible from shore — new species, marine litter, abandoned gear and wildlife in distress. Every reliable observation can be useful.",
+        cards: [
+          {
+            kicker: "Invasive species",
+            title: "Lionfish",
+            body: "Lionfish are being recorded more often in the Adriatic. Do not handle the spines with bare hands. If you see or catch one, a photograph and location can help track its spread.",
+          },
+          {
+            kicker: "Handle with care",
+            title: "Bearded fireworm",
+            body: "The bearded fireworm is expanding northward through the Mediterranean and Adriatic. Its bristles can cause a painful sting — observe, photograph and do not touch.",
+          },
+          {
+            kicker: "Your observation matters",
+            title: "Report a sighting",
+            body: "A photograph, location, date and short note can turn an ordinary day at sea into a useful citizen-science record.",
+            action: "Report an observation",
+            href: "/sea-log",
+          },
+        ],
+      };
 
   return (
     <>
@@ -92,7 +141,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
             <div className="max-w-xl">
               <p className="text-lg leading-8 text-ink/70">{copy.captains.body}</p>
-              <p className="mt-3 text-sm leading-6 text-ink/50">{copy.captains.note}</p>
             </div>
           </div>
           <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-8">
@@ -175,29 +223,32 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 </figure>
               ))}
             </div>
-            <aside className="mt-16 grid gap-7 border border-canvas/15 bg-canvas/6 p-6 sm:p-8 lg:grid-cols-[0.45fr_1fr_auto] lg:items-end lg:gap-10" aria-labelledby="sea-log-heading">
-              <p className="eyebrow text-canvas/55">{copy.seaLog.title}</p>
-              <div>
-                <h3 className="font-serif text-3xl leading-tight tracking-tight text-canvas" id="sea-log-heading">{copy.seaLog.heading}</h3>
-                <p className="mt-4 max-w-3xl text-sm leading-7 text-canvas/68">{copy.seaLog.body}</p>
-              </div>
-              <Link className="button-sea-log focus-ring inline-flex justify-center" href={copy.seaLog.href}>
-                {copy.seaLog.action} <ArrowIcon className="size-5" />
-              </Link>
-            </aside>
           </div>
         </section>
 
-        <section aria-labelledby="invitation-heading" className="page-shell py-24 text-center md:py-36" id="final-invitation">
-          <VerifiedIcon className="mx-auto size-8 text-rust" />
-          <p className="eyebrow mt-6">{copy.invitation.eyebrow}</p>
-          <h2 className="mx-auto mt-5 max-w-[14ch] font-serif text-[clamp(2.8rem,5vw,5.5rem)] leading-[1.02] tracking-[-0.045em]" id="invitation-heading">
-            {copy.invitation.heading}
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-ink/68">{copy.invitation.body}</p>
-          <Link className="button-primary focus-ring mt-9 inline-flex" href="#captains">
-            {copy.invitation.action} <ArrowIcon className="size-5" />
-          </Link>
+        <section aria-labelledby="citizen-science-heading" className="page-shell py-20 md:py-28" id="citizen-science">
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+            <div>
+              <p className="eyebrow">{citizenScience.eyebrow}</p>
+              <h2 className="section-title mt-4" id="citizen-science-heading">{citizenScience.heading}</h2>
+            </div>
+            <p className="max-w-2xl self-end text-lg leading-8 text-ink/70">{citizenScience.body}</p>
+          </div>
+
+          <div className="mt-14 grid gap-px overflow-hidden border border-ink/15 bg-ink/15 md:grid-cols-3">
+            {citizenScience.cards.map((card) => (
+              <article className="flex min-h-full flex-col bg-canvas p-7 sm:p-8" key={card.title}>
+                <p className="eyebrow text-rust">{card.kicker}</p>
+                <h3 className="mt-5 font-serif text-3xl leading-tight tracking-tight">{card.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-ink/68">{card.body}</p>
+                {card.action && card.href ? (
+                  <Link className="button-primary focus-ring mt-8 inline-flex self-start" href={card.href}>
+                    {card.action} <ArrowIcon className="size-5" />
+                  </Link>
+                ) : null}
+              </article>
+            ))}
+          </div>
         </section>
       </main>
 
