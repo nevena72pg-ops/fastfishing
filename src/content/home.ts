@@ -56,7 +56,7 @@ export const homeCopy = {
       ["Captains", "#captains"],
       ["Stories", "#stories"],
       ["Destinations", "#destinations"],
-      ["About", "#trust"],
+      ["The Sea", "#sea"],
     ],
     footer: {
       description:
@@ -71,7 +71,7 @@ export const homeCopy = {
     },
     hero: {
       eyebrow: "Bar & Budva · Montenegro",
-      heading: "Choose the person who knows the sea.",
+      heading: "Choose the captain who knows the sea.",
       body: "Meet local captains we know personally. Learn how they fish, teach, cook and care for these waters—then speak with them directly.",
       primaryAction: "Meet the Captains",
       barAction: "Explore Bar",
@@ -89,7 +89,7 @@ export const homeCopy = {
     trust: {
       eyebrow: "Trust before conversation",
       heading: "Known personally.\nRepresented honestly.",
-      body: "A photograph of a boat tells very little about the person at the helm. We meet every captain, check what matters and write each profile from a real conversation.",
+      body: "A photograph of a boat tells very little about the captain at the helm. We meet every captain, check what matters and write each profile from a real conversation.",
       steps: [
         ["01", "We meet", "Time in the marina, on the boat and in conversation comes before publication."],
         ["02", "We verify", "Identity, vessel, safety, experience and public claims are checked and reviewed."],
@@ -97,9 +97,9 @@ export const homeCopy = {
       ],
     },
     captains: {
-      eyebrow: "The people at the helm",
+      eyebrow: "Captains at the helm",
       heading: "Meet the captains",
-      body: "Choose a person whose temperament, knowledge and way of sharing the sea feel right for you.",
+      body: "Choose a captain whose temperament, knowledge and way of sharing the sea feel right for you.",
       note: "Prototype profiles: names, words and photographs will be replaced after real conversations and verification.",
       verified: "Verified profile",
       action: "Meet the Captain",
@@ -130,8 +130,8 @@ export const homeCopy = {
     },
     invitation: {
       eyebrow: "A conversation, not a checkout",
-      heading: "Find the person you would like to spend a day with.",
-      body: "Take your time. Read their stories. When someone feels right, start a direct conversation about the day.",
+      heading: "Find the captain you would like to spend a day with.",
+      body: "Take your time. Read their stories. When a captain feels right, start a direct conversation about the day.",
       action: "Meet the Captains",
     },
   },
@@ -146,7 +146,7 @@ export const homeCopy = {
       ["Kapetani", "#captains"],
       ["Priče", "#stories"],
       ["Destinacije", "#destinations"],
-      ["O nama", "#trust"],
+      ["More", "#sea"],
     ],
     footer: {
       description:
