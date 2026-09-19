@@ -4,7 +4,7 @@ import { captainServiceHeaders, captainStorageHeaders, currentCaptainSession } f
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const SEA_LOG_BUCKET = "sea-log";
+const SEA_LOG_BUCKET = "sea-log";\n\nfunction storageBaseUrl() {\n  if (!SUPABASE_URL) return "";\n  try {\n    const url = new URL(SUPABASE_URL);\n    if (url.hostname.endsWith(".supabase.co")) {\n      url.hostname = url.hostname.replace(".supabase.co", ".storage.supabase.co");\n    }\n    return url.origin;\n  } catch {\n    return SUPABASE_URL;\n  }\n}
 
 const ALLOWED_CATEGORIES = new Set(["species", "waste", "water", "weather", "other"]);
 const ALLOWED_IMAGE_TYPES = new Map([
@@ -57,7 +57,7 @@ async function uploadPhoto(captainId: string, photo: File) {
   const path = `${captainId}/${stamp}-${randomUUID()}.${extension}`;
   const bytes = await photo.arrayBuffer();
 
-  const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
+  const response = await fetch(`${storageBaseUrl()}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
     method: "POST",
     headers: {
       ...captainStorageHeaders(),
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
     console.error("Sea Log insert failed", response.status, detail);
 
     if (photoPath) {
-      await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
+      await fetch(`${storageBaseUrl()}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
         method: "DELETE",
         headers: captainStorageHeaders(),
         cache: "no-store",
