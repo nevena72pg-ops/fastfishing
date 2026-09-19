@@ -52,11 +52,10 @@ export async function currentCaptainSession() {
 }
 
 function headersForKey(key: string): Record<string, string> {
-  const headers: Record<string, string> = { apikey: key };
-  if (!key.startsWith("sb_secret_")) {
-    headers.Authorization = `Bearer ${key}`;
-  }
-  return headers;
+  return {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+  };
 }
 
 export function captainServiceHeaders(): Record<string, string> {
@@ -65,6 +64,6 @@ export function captainServiceHeaders(): Record<string, string> {
 }
 
 export function captainStorageHeaders(): Record<string, string> {
-  const key = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || "";
   return headersForKey(key);
 }
