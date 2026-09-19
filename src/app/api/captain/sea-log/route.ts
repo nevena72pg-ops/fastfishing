@@ -57,7 +57,7 @@ async function uploadPhoto(captainId: string, photo: File) {
   const path = `${captainId}/${stamp}-${randomUUID()}.${extension}`;
   const bytes = await photo.arrayBuffer();
 
-  const response = await fetch(`${storageBaseUrl()}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
+  const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
     method: "POST",
     headers: {
       ...captainStorageHeaders(),
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
     console.error("Sea Log insert failed", response.status, detail);
 
     if (photoPath) {
-      await fetch(`${storageBaseUrl()}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
+      await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
         method: "DELETE",
         headers: captainStorageHeaders(),
         cache: "no-store",
