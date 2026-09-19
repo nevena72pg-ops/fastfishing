@@ -4,7 +4,7 @@ import { captainServiceHeaders, captainStorageHeaders, currentCaptainSession } f
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const SEA_LOG_BUCKET = "sea-log";\n\nfunction storageBaseUrl() {\n  if (!SUPABASE_URL) return "";\n  try {\n    const url = new URL(SUPABASE_URL);\n    if (url.hostname.endsWith(".supabase.co")) {\n      url.hostname = url.hostname.replace(".supabase.co", ".storage.supabase.co");\n    }\n    return url.origin;\n  } catch {\n    return SUPABASE_URL;\n  }\n}
+const SEA_LOG_BUCKET = "sea-log";
 
 const ALLOWED_CATEGORIES = new Set(["species", "waste", "water", "weather", "other"]);
 const ALLOWED_IMAGE_TYPES = new Map([
