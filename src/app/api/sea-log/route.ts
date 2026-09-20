@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;\nconst SUPABASE_LEGACY_SERVICE_ROLE_KEY = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY;
 const SEA_LOG_BUCKET = "sea-log";
 
 const ALLOWED_CATEGORIES = new Set(["species", "waste", "water", "weather", "other"]);
