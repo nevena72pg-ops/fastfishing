@@ -54,10 +54,6 @@ export async function currentCaptainSession() {
 function headersForKey(key: string): Record<string, string> {
   const headers: Record<string, string> = { apikey: key };
 
-  // Modern sb_secret_* keys are API gateway keys, not JWTs. Sending them as
-  // Authorization: Bearer makes Storage interpret the secret as a JWT/tenant
-  // token and can produce TenantNotFound. Legacy service_role JWTs still use
-  // the Authorization header.
   if (!key.startsWith("sb_secret_")) {
     headers.Authorization = `Bearer ${key}`;
   }
@@ -71,6 +67,21 @@ export function captainServiceHeaders(): Record<string, string> {
 }
 
 export function captainStorageHeaders(): Record<string, string> {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || "";
-  return headersForKey(key);
+  const gatewayKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  const legacyJwt = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY || "";
+
+  const headers: Record<string, string> = {
+    apikey: gatewayKey || legacyJwt,
+  };
+
+  // Storage needs a JWT bearer token for the service role. Keep the modern
+  // sb_secret_* key in apikey for the gateway, and use the legacy service_role
+  // JWT only as Authorization.
+  if (legacyJwt) {
+    headers.Authorization = `Bearer ${legacyJwt}`;
+  } else if (gatewayKey && !gatewayKey.startsWith("sb_secret_")) {
+    headers.Authorization = `Bearer ${gatewayKey}`;
+  }
+
+  return headers;
 }
