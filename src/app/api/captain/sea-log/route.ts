@@ -127,6 +127,7 @@ export async function POST(request: Request) {
 
   const payload = {
     captain_name: session.name,
+    reporter_type: "captain",
     category,
     species_name: category === "species" ? optionalText(formData.get("speciesName"), 180) : null,
     notes: optionalText(formData.get("notes"), 2000),
