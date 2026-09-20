@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { captainServiceHeaders, captainStorageHeaders } from "@/lib/captain-session";
+import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -14,6 +14,18 @@ const ALLOWED_IMAGE_TYPES = new Map([
   ["image/heic", "heic"],
   ["image/heif", "heif"],
 ]);
+
+function supabaseAdmin() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+
+  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+}
 
 function optionalText(value: FormDataEntryValue | null, maxLength: number) {
   if (typeof value !== "string") return null;
@@ -42,7 +54,8 @@ function safeDetail(detail: string) {
 }
 
 async function uploadPhoto(photo: File) {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+  const supabase = supabaseAdmin();
+  if (!supabase) return null;
 
   if (photo.size > 10 * 1024 * 1024) {
     throw new Error("Fotografija je veća od 10 MB.");
@@ -57,29 +70,22 @@ async function uploadPhoto(photo: File) {
   const path = `guest/${stamp}-${randomUUID()}.${extension}`;
   const bytes = await photo.arrayBuffer();
 
-  const response = await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${path}`, {
-    method: "POST",
-    headers: {
-      ...captainStorageHeaders(),
-      "Content-Type": photo.type,
-      "x-upsert": "false",
-    },
-    body: bytes,
-    cache: "no-store",
+  const { error } = await supabase.storage.from(SEA_LOG_BUCKET).upload(path, bytes, {
+    contentType: photo.type,
+    upsert: false,
   });
 
-  if (!response.ok) {
-    const detail = await response.text();
-    console.error("Guest Sea Log photo upload failed", response.status, detail);
-    const safe = safeDetail(detail) || response.statusText || "bez detalja";
-    throw new Error(`Foto upload greška ${response.status}: ${safe}`);
+  if (error) {
+    console.error("Guest Sea Log photo upload failed", error.message);
+    throw new Error(`Foto upload greška: ${safeDetail(error.message)}`);
   }
 
   return path;
 }
 
 export async function POST(request: Request) {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  const supabase = supabaseAdmin();
+  if (!supabase) {
     return NextResponse.json({ error: "Sea Log baza nije konfigurisana." }, { status: 503 });
   }
 
@@ -134,36 +140,24 @@ export async function POST(request: Request) {
     review_status: "submitted",
   };
 
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/sea_log_observations`, {
-    method: "POST",
-    headers: {
-      ...captainServiceHeaders(),
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-  });
+  const { data, error } = await supabase
+    .from("sea_log_observations")
+    .insert(payload)
+    .select("id")
+    .single();
 
-  if (!response.ok) {
-    const detail = await response.text();
-    console.error("Guest Sea Log insert failed", response.status, detail);
+  if (error) {
+    console.error("Guest Sea Log insert failed", error.message);
 
     if (photoPath) {
-      await fetch(`${SUPABASE_URL}/storage/v1/object/${SEA_LOG_BUCKET}/${photoPath}`, {
-        method: "DELETE",
-        headers: captainStorageHeaders(),
-        cache: "no-store",
-      }).catch(() => undefined);
+      await supabase.storage.from(SEA_LOG_BUCKET).remove([photoPath]).catch(() => undefined);
     }
 
-    const safe = safeDetail(detail) || response.statusText || "bez detalja";
     return NextResponse.json(
-      { error: `Sea Log upis greška ${response.status}: ${safe}` },
+      { error: `Sea Log upis greška: ${safeDetail(error.message)}` },
       { status: 503 },
     );
   }
 
-  const rows = (await response.json()) as { id?: string }[];
-  return NextResponse.json({ ok: true, id: rows[0]?.id ?? null }, { status: 201 });
+  return NextResponse.json({ ok: true, id: data?.id ?? null }, { status: 201 });
 }
