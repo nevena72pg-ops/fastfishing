@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowIcon } from "@/components/icons";
+import { GuestSeaLogForm } from "@/components/guest-sea-log-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { seaLogCopy } from "@/content/sea-log";
@@ -30,6 +31,9 @@ export default async function SeaLogPage({ searchParams }: SeaLogPageProps) {
           </h1>
           <p className="mt-8 text-lg leading-8 text-ink/72">{copy.body}</p>
           <p className="mt-5 text-base leading-7 text-ink/62">{copy.note}</p>
+
+          <GuestSeaLogForm locale={locale} />
+
           <Link className="button-primary focus-ring mt-10 inline-flex" href={locale === "cg" ? "/?lang=cg#sea" : "/#sea"}>
             {copy.returnHome} <ArrowIcon className="size-5" />
           </Link>
