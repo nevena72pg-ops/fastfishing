@@ -4,7 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 import { currentCaptainSession } from "@/lib/captain-session";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;\nconst SUPABASE_LEGACY_SERVICE_ROLE_KEY = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_LEGACY_SERVICE_ROLE_KEY = process.env.SUPABASE_LEGACY_SERVICE_ROLE_KEY;
 const SEA_LOG_BUCKET = "sea-log";
 
 const ALLOWED_CATEGORIES = new Set(["species", "waste", "water", "weather", "other"]);
@@ -17,9 +18,10 @@ const ALLOWED_IMAGE_TYPES = new Map([
 ]);
 
 function supabaseAdmin() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+  const adminKey = SUPABASE_LEGACY_SERVICE_ROLE_KEY || SUPABASE_SERVICE_ROLE_KEY;
+  if (!SUPABASE_URL || !adminKey) return null;
 
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  return createClient(SUPABASE_URL, adminKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
