@@ -251,8 +251,8 @@ export const captains: Captain[] = [
   {
     name: { en: "Baćko — Petar Radulović", cg: "Baćko — Petar Radulović" },
     introduction: {
-      en: "One of the first captains joining the FishWithLocals pilot.",
-      cg: "Jedan od prvih kapetana koji se pridružuju FishWithLocals pilotu.",
+      en: "His FishWithLocals profile starts with what can be checked: the person, the boat, the fishing and the way he speaks about a day at sea.",
+      cg: "Njegov FishWithLocals profil počinje od onoga što možemo provjeriti: čovjeka, broda, ribolova i načina na koji govori o danu na moru.",
     },
     imageLabel: {
       en: "Baćko — Petar Radulović with a tuna catch",
