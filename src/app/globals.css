@@ -11,8 +11,9 @@
   --color-sand: #e9dfcd;
   --color-rust: #a25336;
   --color-moss: #586f61;
-  --font-serif: Georgia, "Times New Roman", serif;
-  --font-sans: Arial, Helvetica, sans-serif;
+  /* A single legible, modern font family for titles and body copy. */
+  --font-serif: Arial, Tahoma, Helvetica, sans-serif;
+  --font-sans: Arial, Tahoma, Helvetica, sans-serif;
   --page-gutter: clamp(1.25rem, 4vw, 4rem);
 }
 
