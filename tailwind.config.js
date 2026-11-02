@@ -12,8 +12,9 @@ module.exports = {
         moss: "#586f61",
       },
       fontFamily: {
-        serif: ["Georgia", "Times New Roman", "serif"],
-        sans: ["Arial", "Helvetica", "sans-serif"],
+        // Keep existing font-serif classes working, but render them in Arial too.
+        serif: ["Arial", "Tahoma", "Helvetica", "sans-serif"],
+        sans: ["Arial", "Tahoma", "Helvetica", "sans-serif"],
       },
     },
   },
