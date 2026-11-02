@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import type { MouseEvent } from "react";
 import { homeCopy } from "@/content/home";
 import { locales, type Locale } from "@/content/i18n";
@@ -53,8 +54,24 @@ export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale
   return (
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-canvas/95 backdrop-blur-md">
       <div className="page-shell flex min-h-[4.5rem] items-center justify-between gap-4 py-3">
-        <Link className="font-serif text-[1.3rem] tracking-[-0.025em] text-ink focus-ring" href={copy.logoHref}>
-          FishWithLocals
+        <Link
+          className="focus-ring flex shrink-0 items-center gap-1.5 sm:gap-2"
+          href={copy.logoHref}
+          aria-label="FishWithLocals — home"
+        >
+          <Image
+            src="/images/brand/fwl-compass.svg"
+            alt=""
+            aria-hidden="true"
+            width={56}
+            height={49}
+            unoptimized
+            priority
+            className="h-[46px] w-auto shrink-0 sm:h-[54px]"
+          />
+          <span className="whitespace-nowrap font-sans text-[1.05rem] font-bold tracking-tight sm:text-[1.3rem]">
+            <span className="text-ink">Fish</span><span className="text-[#008f9b]">With</span><span className="text-rust">Locals</span>
+          </span>
         </Link>
 
         <nav aria-label={copy.navLabel} className="hidden lg:block">
