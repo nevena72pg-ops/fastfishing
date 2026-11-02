@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { homeCopy } from "@/content/home";
 import type { Locale } from "@/content/i18n";
 
@@ -22,7 +23,26 @@ export function SiteFooter({ locale }: SiteFooterProps) {
     <footer className="border-t border-canvas/15 bg-ink text-canvas">
       <div className="page-shell grid gap-10 py-12 md:grid-cols-[1fr_auto] md:items-end md:py-16">
         <div>
-          <p className="font-serif text-2xl">FishWithLocals</p>
+          <Link
+            className="focus-ring inline-flex items-center gap-2"
+            href={locale === "cg" ? "/?lang=cg" : "/"}
+            aria-label="FishWithLocals — home"
+          >
+            <span className="inline-flex items-center justify-center rounded-full bg-canvas p-1">
+              <Image
+                src="/images/brand/fwl-compass.svg"
+                alt=""
+                aria-hidden="true"
+                width={56}
+                height={49}
+                unoptimized
+                className="h-12 w-auto shrink-0"
+              />
+            </span>
+            <span className="whitespace-nowrap font-sans text-xl font-bold tracking-tight sm:text-2xl">
+              <span className="text-canvas">Fish</span><span className="text-[#42c4cb]">With</span><span className="text-[#e69a70]">Locals</span>
+            </span>
+          </Link>
           <p className="mt-3 max-w-md text-sm leading-6 text-canvas/65">{copy.description}</p>
         </div>
         <nav aria-label={copy.navLabel}>
