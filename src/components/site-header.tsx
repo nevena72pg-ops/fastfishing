@@ -70,7 +70,7 @@ export function SiteHeader({ languageBasePath = "/", languageParams = {}, locale
             className="h-[46px] w-auto shrink-0 sm:h-[54px]"
           />
           <span className="whitespace-nowrap font-sans text-[1.05rem] font-bold tracking-tight sm:text-[1.3rem]">
-            <span className="text-ink">Fish</span><span className="text-[#008f9b]">With</span><span className="text-rust">Locals</span>
+            <span className="text-ink">Fish</span><span className="text-[#007681]">With</span><span className="text-rust">Locals</span>
           </span>
         </Link>
 
