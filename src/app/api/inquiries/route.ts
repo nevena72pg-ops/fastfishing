@@ -101,8 +101,32 @@ export async function POST(request: Request) {
     }
   }
 
+  // Validate on the server: browser date constraints can be bypassed.
+  const date = String(body.date).trim();
+  const time = String(body.time).trim();
+  const validDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(date) &&
+    !Number.isNaN(Date.parse(date)) &&
+    new Date(date + "T00:00:00Z").toISOString().slice(0, 10) === date;
+  const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/.test(time);
+  const now = new Date();
+  const montenegroToday = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Podgorica", year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(now);
+  if (!validDate || date < montenegroToday || !validTime) {
+    return NextResponse.json({ error: "Invalid or past date/time." }, { status: 400 });
+  }
+  const maxLengths: Record<string, number> = {
+    captain: 120, duration: 60, experience: 120,
+    guestName: 160, phone: 40, note: 2000,
+  };
+  for (const [field, limit] of Object.entries(maxLengths)) {
+    if (typeof body[field] === "string" && body[field].length > limit) {
+      return NextResponse.json({ error: `Field too long: ${field}` }, { status: 400 });
+    }
+  }
+
   const partySize = Number(body.people);
-  if (!Number.isInteger(partySize) || partySize < 1) {
+  if (!Number.isInteger(partySize) || partySize < 1 || partySize > 20) {
     return NextResponse.json({ error: "Invalid party size." }, { status: 400 });
   }
 
