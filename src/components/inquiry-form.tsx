@@ -21,7 +21,13 @@ export function InquiryForm({ captain, locale }: InquiryFormProps) {
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const minDate = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const minDate = useMemo(() => {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Podgorica", year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(new Date());
+    const part = (type: string) => parts.find((item) => item.type === type)?.value ?? "";
+    return `${part("year")}-${part("month")}-${part("day")}`;
+  }, []);
 
   const copy = locale === "cg"
     ? {
