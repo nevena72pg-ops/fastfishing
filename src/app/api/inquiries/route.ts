@@ -104,10 +104,10 @@ export async function POST(request: Request) {
   // Validate on the server: browser date constraints can be bypassed.
   const date = String(body.date).trim();
   const time = String(body.time).trim();
-  const validDate = /^\\d{4}-\\d{2}-\\d{2}$/.test(date) &&
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(date) &&
     !Number.isNaN(Date.parse(date)) &&
     new Date(date + "T00:00:00Z").toISOString().slice(0, 10) === date;
-  const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/.test(time);
+  const validTime = /^([01]\d|2[0-3]):[0-5]\d$/.test(time);
   const now = new Date();
   const dateParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Podgorica", year: "numeric", month: "2-digit", day: "2-digit",
