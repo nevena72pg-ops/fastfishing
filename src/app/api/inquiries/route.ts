@@ -109,9 +109,11 @@ export async function POST(request: Request) {
     new Date(date + "T00:00:00Z").toISOString().slice(0, 10) === date;
   const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/.test(time);
   const now = new Date();
-  const montenegroToday = new Intl.DateTimeFormat("en-CA", {
+  const dateParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Podgorica", year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(now);
+  }).formatToParts(now);
+  const datePart = (type: string) => dateParts.find((part) => part.type === type)?.value ?? "";
+  const montenegroToday = `${datePart("year")}-${datePart("month")}-${datePart("day")}`;
   if (!validDate || date < montenegroToday || !validTime) {
     return NextResponse.json({ error: "Invalid or past date/time." }, { status: 400 });
   }
